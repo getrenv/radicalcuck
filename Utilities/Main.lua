@@ -163,7 +163,7 @@ end
 
 function Utility.ReJoin()
     if #PlayerService:GetPlayers() <= 1 then
-        LocalPlayer:Kick("\nParvus Hub\nRejoining...")
+        LocalPlayer:Kick("\nRadical Hub\nRejoining...")
         task.wait(0.5)
         TeleportService:Teleport(game.PlaceId)
     else
@@ -186,8 +186,8 @@ function Utility.ServerHop()
             game.PlaceId, Servers[math.random(#Servers)]
         )
     else
-        Parvus.Utilities.UI:Push({
-            Title = "Parvus Hub",
+        Radical.Utilities.UI:Push({
+            Title = "Radical Hub",
             Description = "Couldn't find a server",
             Duration = 5
         })
@@ -212,7 +212,7 @@ function Utility.JoinDiscord()
 end
 
 function Utility.InitAutoLoad(Window)
-    Window:AutoLoadConfig("Parvus")
+    Window:AutoLoadConfig("Radical")
     Window:SetValue("UI/Enabled", Window.Flags["UI/OOL"])
 end
 function Utility.SetupWatermark(Self, Window)
@@ -221,7 +221,7 @@ function Utility.SetupWatermark(Self, Window)
     RunService.Heartbeat:Connect(function()
         if Window.Watermark.Enabled then
             Window.Watermark.Title = string.format(
-                "Parvus Hub    %s    %i FPS    %i MS",
+                "Radical Hub    %s    %i FPS    %i MS",
                 os.date("%X"), GetFPS(), math.round(Ping:GetValue())
             )
         end
@@ -327,7 +327,7 @@ function Utility.SettingsSection(Self, Window, UIKeybind, CustomMouse)
                 setclipboard("Roblox.GameLauncher.joinGameInstance(" .. game.PlaceId .. ", \"" .. game.JobId .. "\");")
             end})
         end
-        OptionsTab:AddConfigSection("Parvus", "Left")
+        OptionsTab:AddConfigSection("Radical", "Left")
         local BackgroundSection = OptionsTab:Section({Name = "Background", Side = "Right"}) do
             BackgroundSection:Colorpicker({Name = "Color", Flag = "Background/Color", Value = {1, 1, 0, 0, false},
             Callback = function(HSVAR, Color) Window.Background.ImageColor3 = Color Window.Background.ImageTransparency = HSVAR[4] end})
@@ -376,23 +376,23 @@ function Utility.SettingsSection(Self, Window, UIKeybind, CustomMouse)
             CrosshairSection:Slider({Name = "Gap", Flag = "Crosshair/Gap", Min = 0, Max = 10, Value = 2, Unit = "px"})
         end
         local DiscordSection = OptionsTab:Section({Name = "Discord", Side = "Right"}) do
-            DiscordSection:Label({Text = "Invite Code: sYqDpbPYb7"})
-            DiscordSection:Button({Name = "Copy Invite Link", Callback = function() setclipboard("https://discord.gg/sYqDpbPYb7") end})
+            DiscordSection:Label({Text = "Invite Code: NULL"})
+            DiscordSection:Button({Name = "Copy Invite Link", Callback = function() setclipboard("https://discord.gg/NULL") end})
             DiscordSection:Button({Name = "Join Through Discord App", Callback = Self.JoinDiscord})
         end
         local CreditsSection = OptionsTab:Section({Name = "Credits", Side = "Right"}) do
-            CreditsSection:Label({Text = "Made by AlexR32 @ discord.com"})
-            CreditsSection:Label({Text = "I dont take friend requests\nfind me on my server: sYqDpbPYb7"})
-            CreditsSection:Divider({Text = "Special thanks to"})
-            CreditsSection:Label({Text = "Jan @ v3rmillion.net\nBackground patterns"})
+            CreditsSection:Label({Text = "Made by kazuw @ discord.com"})
+         --   CreditsSection:Label({Text = "I dont take friend requests\nfind me on my server: sYqDpbPYb7"})
+         --   CreditsSection:Divider({Text = "Special thanks to"})
+           -- CreditsSection:Label({Text = "Jan @ v3rmillion.net\nBackground patterns"})
             --CreditsSection:Label({Text = "Infinite Yield Team\nServer Hop and Rejoin"})
-            CreditsSection:Label({Text = "CornCatCornDog @ v3rmillion.net\nOffscreen Arrows"})
+         --   CreditsSection:Label({Text = "CornCatCornDog @ v3rmillion.net\nOffscreen Arrows"})
             --CreditsSection:Label({Text = "coasts @ v3rmillion.net\nUniversal ESP"})
-            CreditsSection:Label({Text = "mickeyrbx @ v3rmillion.net\nCalculateBox"})
-            CreditsSection:Label({Text = "Kiriot22 @ v3rmillion.net\nAnti plugin crash"})
-            CreditsSection:Label({Text = "el3tric @ v3rmillion.net\nBracket V2"})
-            CreditsSection:Label({Text = "and much more people\nbehind this project"})
-            CreditsSection:Label({Text = "❤️ ❤️ ❤️ ❤️"})
+          --  CreditsSection:Label({Text = "mickeyrbx @ v3rmillion.net\nCalculateBox"})
+         --   CreditsSection:Label({Text = "Kiriot22 @ v3rmillion.net\nAnti plugin crash"})
+          --  CreditsSection:Label({Text = "el3tric @ v3rmillion.net\nBracket V2"})
+          --  CreditsSection:Label({Text = "and much more people\nbehind this project"})
+            --CreditsSection:Label({Text = "❤️ ❤️ ❤️ ❤️"})
         end
     end
 
