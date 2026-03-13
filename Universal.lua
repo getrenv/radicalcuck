@@ -21,8 +21,8 @@ local KnownBodyParts = {
     {"Left Leg", false}, {"LeftUpperLeg", false}, {"LeftLowerLeg", false}, {"LeftFoot", false}
 }
 
-local Window = Parvus.Utilities.UI:Window({
-    Name = ("Parvus Hub %s %s"):format(utf8.char(8212), Parvus.Game.Name),
+local Window = Radical.Utilities.UI:Window({
+    Name = ("Radical Hub %s %s"):format(utf8.char(8212), Radical.Game.Name),
     Position = UDim2.new(0.5, -248 * 3, 0.5, -248)
 }) do
 
@@ -145,7 +145,7 @@ local Window = Parvus.Utilities.UI:Window({
             TFOVSection:Slider({Name = "Thickness", Flag = "Trigger/FOV/Thickness", Min = 1, Max = 10, Value = 2})
         end
     end
-    local VisualsSection = Parvus.Utilities:ESPSection(Window, "Visuals", "ESP/Player", true, true, true, true, true, true) do
+    local VisualsSection = Radical.Utilities:ESPSection(Window, "Visuals", "ESP/Player", true, true, true, true, true, true) do
         VisualsSection:Colorpicker({Name = "Ally Color", Flag = "ESP/Player/Ally", Value = {0.3333333432674408, 0.6666666269302368, 1, 0, false}})
         VisualsSection:Colorpicker({Name = "Enemy Color", Flag = "ESP/Player/Enemy", Value = {1, 0.6666666269302368, 1, 0, false}})
         VisualsSection:Toggle({Name = "Team Check", Flag = "ESP/Player/TeamCheck", Value = false})
@@ -153,16 +153,16 @@ local Window = Parvus.Utilities.UI:Window({
         VisualsSection:Toggle({Name = "Distance Check", Flag = "ESP/Player/DistanceCheck", Value = false})
         VisualsSection:Slider({Name = "Distance", Flag = "ESP/Player/Distance", Min = 25, Max = 1000, Value = 250, Unit = "studs"})
     end
-    Parvus.Utilities:SettingsSection(Window, "RightShift", false)
-end Parvus.Utilities.InitAutoLoad(Window)
+    Radical.Utilities:SettingsSection(Window, "RightShift", false)
+end Radical.Utilities.InitAutoLoad(Window)
 
-Parvus.Utilities:SetupWatermark(Window)
-Parvus.Utilities:SetupLighting(Window.Flags)
-Parvus.Utilities.Drawing.SetupCursor(Window)
-Parvus.Utilities.Drawing.SetupCrosshair(Window.Flags)
-Parvus.Utilities.Drawing.SetupFOV("Aimbot", Window.Flags)
-Parvus.Utilities.Drawing.SetupFOV("Trigger", Window.Flags)
-Parvus.Utilities.Drawing.SetupFOV("SilentAim", Window.Flags)
+Radical.Utilities:SetupWatermark(Window)
+Radical.Utilities:SetupLighting(Window.Flags)
+Radical.Utilities.Drawing.SetupCursor(Window)
+Radical.Utilities.Drawing.SetupCrosshair(Window.Flags)
+Radical.Utilities.Drawing.SetupFOV("Aimbot", Window.Flags)
+Radical.Utilities.Drawing.SetupFOV("Trigger", Window.Flags)
+Radical.Utilities.Drawing.SetupFOV("SilentAim", Window.Flags)
 
 local WallCheckParams = RaycastParams.new()
 WallCheckParams.FilterType = Enum.RaycastFilterType.Blacklist
@@ -331,7 +331,7 @@ OldNamecall = hookmetamethod(game, "__namecall", function(Self, ...)
     return OldNamecall(Self, ...)
 end)
 
-Parvus.Utilities.NewThreadLoop(0, function()
+Radical.Utilities.NewThreadLoop(0, function()
     if not (Aimbot or Window.Flags["Aimbot/AlwaysEnabled"]) then return end
 
     AimAt(GetClosest(
@@ -346,7 +346,7 @@ Parvus.Utilities.NewThreadLoop(0, function()
         Window.Flags["Aimbot/Prediction"]
     ), Window.Flags["Aimbot/Sensitivity"] / 100)
 end)
-Parvus.Utilities.NewThreadLoop(0, function()
+Radical.Utilities.NewThreadLoop(0, function()
     SilentAim = GetClosest(
         Window.Flags["SilentAim/Enabled"],
         Window.Flags["SilentAim/TeamCheck"],
@@ -359,7 +359,7 @@ Parvus.Utilities.NewThreadLoop(0, function()
         Window.Flags["SilentAim/Prediction"]
     )
 end)
-Parvus.Utilities.NewThreadLoop(0, function()
+Radical.Utilities.NewThreadLoop(0, function()
     if not (Trigger or Window.Flags["Trigger/AlwaysEnabled"]) then return end
     if not isrbxactive() then return end
 
@@ -406,11 +406,11 @@ end)
 
 for Index, Player in pairs(PlayerService:GetPlayers()) do
     if Player == LocalPlayer then continue end
-    Parvus.Utilities.Drawing:AddESP(Player, "Player", "ESP/Player", Window.Flags)
+    Radical.Utilities.Drawing:AddESP(Player, "Player", "ESP/Player", Window.Flags)
 end
 PlayerService.PlayerAdded:Connect(function(Player)
-    Parvus.Utilities.Drawing:AddESP(Player, "Player", "ESP/Player", Window.Flags)
+    Radical.Utilities.Drawing:AddESP(Player, "Player", "ESP/Player", Window.Flags)
 end)
 PlayerService.PlayerRemoving:Connect(function(Player)
-    Parvus.Utilities.Drawing:RemoveESP(Player)
+    Radical.Utilities.Drawing:RemoveESP(Player)
 end)
