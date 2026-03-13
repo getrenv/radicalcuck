@@ -85,6 +85,6 @@ Radical.Loaded = true
 
 Radical.Utilities.UI:Push({
     Title = "Radical Hub",
-    Description = Radical.Game.Name .. " loaded!\n\nThis script is open sourced\nIf you have paid for this script\nOr had to go thru ads\nYou have been scammed.",
+    Description = Radical.Game.Name .. " loaded!",
     Duration = NotificationTime
 })
