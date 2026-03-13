@@ -746,7 +746,7 @@ end
     local Color = WhiteColor
 
     return RunService.RenderStepped:Connect(function()
-        debug.profilebegin("PARVUS_DRAWING")
+        debug.profilebegin("Radical_DRAWING")
         Character, RootPart = GetCharacter(Target, Mode)
         if Character and RootPart then
             ScreenPosition, OnScreen = WorldToScreen(RootPart.Position)
@@ -1279,7 +1279,7 @@ end
 function DrawingLibrary.SetupCursor(Window)
     local Cursor = AddDrawing("Image", {
         Size = V2New(64, 64) / 1.5,
-        Data = Parvus.Cursor,
+        Data = Radical.Cursor,
         --Rounding = 0,
 
         --Transparency = 1,
@@ -1383,7 +1383,7 @@ Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 end)
 
 DrawingLibrary.Connection = RunService.RenderStepped:Connect(function()
-    debug.profilebegin("PARVUS_DRAWING")
+    debug.profilebegin("Radical_DRAWING")
     for Target, ESP in pairs(DrawingLibrary.ESP) do
         DrawingLibrary.Update(ESP, Target)
     end
@@ -1417,7 +1417,7 @@ DrawingLibrary.Connection = RunService.RenderStepped:Connect(function()
 end)
 
 --[[DrawingLibrary.Connection = RunService.RenderStepped:Connect(function()
-    debug.profilebegin("PARVUS_DRAWING")
+    debug.profilebegin("Radical_DRAWING")
     for Target, ESP in pairs(DrawingLibrary.ESP) do
         ESP.Target.Character, ESP.Target.RootPart = GetCharacter(Target, ESP.Mode)
         if ESP.Target.Character and ESP.Target.RootPart then
