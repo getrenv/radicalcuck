@@ -1,17 +1,17 @@
 repeat task.wait() until game.IsLoaded
 repeat task.wait() until game.GameId ~= 0
 
-if Parvus and Parvus.Loaded then
-    Parvus.Utilities.UI:Push({
-        Title = "Parvus Hub",
+if Radical and Radical.Loaded then
+    Radical.Utilities.UI:Push({
+        Title = "Radical Hub",
         Description = "Script already running!",
         Duration = 5
     }) return
 end
 
---[[if Parvus and (Parvus.Game and not Parvus.Loaded) then
-    Parvus.Utilities.UI:Push({
-        Title = "Parvus Hub",
+--[[if Radical and (Radical.Game and not Radical.Loaded) then
+    Radical.Utilities.UI:Push({
+        Title = "Radical Hub",
         Description = "Something went wrong!",
         Duration = 5
     }) return
@@ -26,8 +26,8 @@ local Branch, NotificationTime, IsLocal = ...
 local QueueOnTeleport = queue_on_teleport
 
 local function GetFile(File)
-    return IsLocal and readfile("Parvus/" .. File)
-    or game:HttpGet(("%s%s"):format(Parvus.Source, File))
+    return IsLocal and readfile("Radical/" .. File)
+    or game:HttpGet(("%s%s"):format(Radical.Source, File))
 end
 
 local function LoadScript(Script)
@@ -35,17 +35,17 @@ local function LoadScript(Script)
 end
 
 local function GetGameInfo()
-    for Id, Info in pairs(Parvus.Games) do
+    for Id, Info in pairs(Radical.Games) do
         if tostring(game.GameId) == Id then
             return Info
         end
     end
 
-    return Parvus.Games.Universal
+    return Radical.Games.Universal
 end
 
-getgenv().Parvus = {
-    Source = "https://raw.githubusercontent.com/AlexR32/Parvus/" .. Branch .. "/",
+getgenv().Radical = {
+    Source = "https://raw.githubusercontent.com/getrenv/radicalcuck/" .. Branch .. "/",
 
     Games = {
         ["Universal" ] = { Name = "Universal",                  Script = "Universal"  },
@@ -61,30 +61,30 @@ getgenv().Parvus = {
     }
 }
 
-Parvus.Utilities = LoadScript("Utilities/Main")
-Parvus.Utilities.UI = LoadScript("Utilities/UI")
-Parvus.Utilities.Physics = LoadScript("Utilities/Physics")
-Parvus.Utilities.Drawing = LoadScript("Utilities/Drawing")
+Radical.Utilities = LoadScript("Utilities/Main")
+Radical.Utilities.UI = LoadScript("Utilities/UI")
+Radical.Utilities.Physics = LoadScript("Utilities/Physics")
+Radical.Utilities.Drawing = LoadScript("Utilities/Drawing")
 
-Parvus.Cursor = GetFile("Utilities/ArrowCursor.png")
-Parvus.Loadstring = GetFile("Utilities/Loadstring")
-Parvus.Loadstring = Parvus.Loadstring:format(
-    Parvus.Source, Branch, NotificationTime, tostring(IsLocal)
+Radical.Cursor = GetFile("Utilities/ArrowCursor.png")
+Radical.Loadstring = GetFile("Utilities/Loadstring")
+Radical.Loadstring = Radical.Loadstring:format(
+    Radical.Source, Branch, NotificationTime, tostring(IsLocal)
 )
 
 LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.InProgress then
         --ClearTeleportQueue()
-        QueueOnTeleport(Parvus.Loadstring)
+        QueueOnTeleport(Radical.Loadstring)
     end
 end)
 
-Parvus.Game = GetGameInfo()
-LoadScript(Parvus.Game.Script)
-Parvus.Loaded = true
+Radical.Game = GetGameInfo()
+LoadScript(Radical.Game.Script)
+Radical.Loaded = true
 
-Parvus.Utilities.UI:Push({
-    Title = "Parvus Hub",
-    Description = Parvus.Game.Name .. " loaded!\n\nThis script is open sourced\nIf you have paid for this script\nOr had to go thru ads\nYou have been scammed.",
+Radical.Utilities.UI:Push({
+    Title = "Radical Hub",
+    Description = Radical.Game.Name .. " loaded!\n\nThis script is open sourced\nIf you have paid for this script\nOr had to go thru ads\nYou have been scammed.",
     Duration = NotificationTime
 })
