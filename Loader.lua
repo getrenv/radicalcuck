@@ -31,7 +31,15 @@ local function GetFile(File)
 end
 
 local function LoadScript(Script)
-    return loadstring(GetFile(Script .. ".lua"), Script)()
+    local code = GetFile(Script .. ".lua")
+    if not code then
+        error("Failed to load " .. Script .. ".lua")
+    end
+    local fn = loadstring(code, Script)
+    if not fn then
+        error("Failed to compile " .. Script .. ".lua")
+    end
+    return fn()
 end
 
 local function GetGameInfo()
@@ -66,6 +74,10 @@ Radical.Utilities.UI = LoadScript("Utilities/UI")
 Radical.Utilities.Physics = LoadScript("Utilities/Physics")
 Radical.Utilities.Drawing = LoadScript("Utilities/Drawing")
 
+if not Radical.Utilities or not Radical.Utilities.UI or not Radical.Utilities.Physics or not Radical.Utilities.Drawing then
+    error("Failed to load one or more utilities")
+end
+
 Radical.Cursor = GetFile("Utilities/ArrowCursor.png")
 Radical.Loadstring = GetFile("Utilities/Loadstring")
 Radical.Loadstring = Radical.Loadstring:format(
@@ -74,21 +86,29 @@ Radical.Loadstring = Radical.Loadstring:format(
 
 LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.InProgress then
-        if Radical.Utilities and Radical.Utilities.Cleanup then
-            Radical.Utilities.Cleanup()
-        end
+        pcall(function()
+            if getgenv().Radical and getgenv().Radical.Utilities and type(getgenv().Radical.Utilities.Cleanup) == "function" then
+                getgenv().Radical.Utilities.Cleanup()
+            end
+        end)
         QueueOnTeleport(Radical.Loadstring)
     end
 end)
 
 game:BindToClose(function()
-    if Radical.Utilities and Radical.Utilities.Cleanup then
-        Radical.Utilities.Cleanup()
-    end
+    pcall(function()
+        if getgenv().Radical and getgenv().Radical.Utilities and type(getgenv().Radical.Utilities.Cleanup) == "function" then
+            getgenv().Radical.Utilities.Cleanup()
+        end
+    end)
 end)
 
 Radical.Game = GetGameInfo()
-LoadScript(Radical.Game.Script)
+local success, err = pcall(LoadScript, Radical.Game.Script)
+if not success then
+    warn("Failed to load game script: " .. tostring(err))
+    return
+end
 Radical.Loaded = true
 
 Radical.Utilities.UI:Push({

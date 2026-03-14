@@ -135,9 +135,10 @@ function Utility.MakeBeam(Origin, Position, Color)
     return Beam
 end
 function Utility.NewThreadLoop(Wait, Function)
+    if not Utility.Threads then Utility.Threads = {} end
     local thread = nil
     thread = task.spawn(function()
-        table.insert(Utility.Threads, thread)
+        pcall(function() table.insert(Utility.Threads, thread) end)
         while true do
             local Delta = task.wait(Wait)
             local Success, Error = pcall(Function, Delta)
@@ -147,8 +148,10 @@ function Utility.NewThreadLoop(Wait, Function)
                 break
             end
         end
-        local idx = table.find(Utility.Threads, thread)
-        if idx then table.remove(Utility.Threads, idx) end
+        pcall(function()
+            local idx = table.find(Utility.Threads, thread)
+            if idx then table.remove(Utility.Threads, idx) end
+        end)
     end)
     return thread
 end
@@ -166,15 +169,21 @@ function Utility.FixUpValue(fn, hook, gvar)
 end
 
 function Utility.CleanupThreads()
+    if not Utility.Threads then return end
     for _, Thread in pairs(Utility.Threads) do
         if type(Thread) == "thread" then
-            pcall(function() task.cancel(Thread) end)
+            pcall(function() 
+                if task and task.cancel then
+                    task.cancel(Thread) 
+                end
+            end)
         end
     end
     Utility.Threads = {}
 end
 
 function Utility.CleanupConnections()
+    if not Utility.Connections then return end
     for _, Connection in pairs(Utility.Connections) do
         if Connection and typeof(Connection) == "RBXScriptConnection" then
             pcall(function() Connection:Disconnect() end)
@@ -184,8 +193,8 @@ function Utility.CleanupConnections()
 end
 
 function Utility.Cleanup()
-    Utility.CleanupThreads()
-    Utility.CleanupConnections()
+    pcall(function() Utility.CleanupThreads() end)
+    pcall(function() Utility.CleanupConnections() end)
 end
 
 function Utility.ReJoin()
