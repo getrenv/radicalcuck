@@ -1,6 +1,6 @@
 # Radical  [![Discord Shield](https://discordapp.com/api/guilds/958056630321303602/widget.png)](https://discord.gg/stellaa)
 
-
+### Information: This is a free script hub, creds to Parvus Hub, we are continuing its fate.
 ### Loadstring
 ```lua
 local IsDevelopmentBranch, NotificationTime = false, 30
