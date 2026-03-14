@@ -527,14 +527,14 @@ local XZVector = Vector3.new(1, 0, 1)
 local WallCheckParams = RaycastParams.new()
 WallCheckParams.FilterType = Enum.RaycastFilterType.Blacklist
 WallCheckParams.FilterDescendantsInstances = {
-    Workspace.Effects, Workspace.Sounds,
+    Workspace.Effects, ReplicatedStorage.Sounds,
     Workspace.Locations, Workspace.Spawns
 } WallCheckParams.IgnoreWater = true
 
 local function Raycast(Origin, Direction)
     if not table.find(WallCheckParams.FilterDescendantsInstances, LocalPlayer.Character) then
         WallCheckParams.FilterDescendantsInstances = {
-            Workspace.Effects, Workspace.Sounds,
+            Workspace.Effects, ReplicatedStorage.Sounds,
             Workspace.Locations, Workspace.Spawns,
             LocalPlayer.Character
         }
