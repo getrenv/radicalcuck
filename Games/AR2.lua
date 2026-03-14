@@ -24,8 +24,6 @@ local LocalPlayer = PlayerService.LocalPlayer
 local Aimbot, SilentAim, Trigger = false, nil, nil
 
 local Mannequin = ReplicatedStorage.Assets.Mannequin
-local LootBins = Workspace.Map.Shared.LootBins
-local Randoms = Workspace.Map.Shared.Randoms
 local Vehicles = Workspace.Vehicles.Spawned
 local Characters = Workspace.Characters
 local Corpses = Workspace.Corpses
@@ -99,7 +97,6 @@ local ShotMaxDistance = Globals.ShotMaxDistance
 local ProjectileGravity = Globals.ProjectileGravity
 
 local SquadData = nil
-local ItemMemory = {}
 local GroundPart = Instance.new("Part")
 local OldBaseTime = LightingState.BaseTime
 local NoClipObjects, NoClipEvent = {}, nil
@@ -121,66 +118,7 @@ end)
 --RenderSettings.Terrain = 36
 
 -- game data mess
-local RandomEvents, ItemCategory, ZombieInherits, SanityBans, AdminRoles = {
-    {"ATVCrashsiteRenegade01", false},
-    {"BankTruckRobbery01", false},
-    {"BeachedAluminumBoat01", false},
-    {"BeechcraftGemBroker01", false},
-    {"C-123ProviderMilitary01", true},
-    {"C-123ProviderMilitary02", true},
-    {"CampSovietBandit01", true},
-    {"ConstructionWorksite01", false},
-    {"CrashEasterBus01", true},
-    {"CrashPrisonBus01", false},
-    {"EasterNestEvent01", true},
-    {"FuddCampsite01", false},
-    {"FuneralProcession01", false},
-    {"GraveFresh01", false},
-    {"GraveNumberOne1", false},
-    {"LifePreserverMilitary01", true},
-    {"LifePreserverSoviet01", true},
-    {"LifePreserverSpecOps01", true},
-    {"LongswordStone01", true},
-    {"MilitaryBlockade01", true},
-    {"MilitaryConvoy01", true},
-    {"ParamedicScene01", false},
-    {"PartyTrailerDisco01", true},
-    {"PartyTrailerTechnoGold", true},
-    {"PartyTrailerTechnoGoldDeagleMod1", true},
-    {"PirateTreasure01", true},
-    {"PoliceBlockade01", false},
-    {"PoolsClosed01", false},
-    {"PopupCampsite01", false},
-    {"PopupFishing01", false},
-    {"PopupFishing02", false},
-    {"RandomCrashCessna01", false},
-    {"SeahawkCrashsite04", true},
-    {"SeahawkCrashsite05", true},
-    {"SeahawkCrashsite06", true},
-    {"SeahawkCrashsite07", true},
-    {"SeahawkCrashsiteRogue01", true},
-    {"SedanHaul01", false},
-    {"SpecialForcesCrash01", true},
-    {"StashFood01", false},
-    {"StashFood02", false},
-    {"StashFood03", false},
-    {"StashGeneral01", false},
-    {"StashGeneral02", false},
-    {"StashGeneral03", false},
-    {"StashMedical01", false},
-    {"StashMedical02", false},
-    {"StashMedical03", false},
-    {"StashWeaponHigh01", false},
-    {"StashWeaponHigh02", false},
-    {"StashWeaponHigh03", false},
-    {"StashWeaponMid01", false},
-    {"StashWeaponMid02", false},
-    {"StashWeaponMid03", false},
-    {"StrandedStation01", false},
-    {"StrandedStationKeyboard01", false},
-    {"ValentinesBachelor01", false}
-},
-{
+local ItemCategory, ZombieInherits, SanityBans, AdminRoles = {
     {"Containers", false}, {"Accessories", true}, {"Ammo", false}, {"Attachments", false},
     {"Backpacks", false}, {"Belts", true}, {"Clothing", true}, {"Consumables", true},
     {"Firearms", false}, {"Hats", true}, {"Medical", false}, {"Melees", false},
@@ -370,24 +308,6 @@ local Window = Radical.Utilities.UI:Window({
             end
 
             ZombiesSection:Dropdown({Name = "ESP List", Flag = "AR2/Zombies", List = ZIs})
-        end
-        local RESection = ESPTab:Section({Name = "Random Events ESP", Side = "Right"}) do local REs = {}
-            RESection:Toggle({Name = "Enabled", Flag = "AR2/ESP/RandomEvents/Enabled", Value = false})
-            RESection:Toggle({Name = "Distance Check", Flag = "AR2/ESP/RandomEvents/DistanceCheck", Value = true})
-            RESection:Slider({Name = "Distance", Flag = "AR2/ESP/RandomEvents/Distance", Min = 25, Max = 5000, Value = 1500, Unit = "studs"})
-
-            for Index, Data in pairs(RandomEvents) do
-                local REFlag = "AR2/ESP/RandomEvents/" .. Data[1]
-                Window.Flags[REFlag .. "/Enabled"] = Data[2]
-
-                REs[#REs + 1] = {
-                    Name = Data[1], Mode = "Toggle", Value = Data[2],
-                    Colorpicker = {Flag = REFlag .. "/Color", Value = {1, 0, 1, 0.5, false}},
-                    Callback = function(Selected, Option) Window.Flags[REFlag .. "/Enabled"] = Option.Value end
-                }
-            end
-
-            RESection:Dropdown({Name = "ESP List", Flag = "AR2/RandomEvents", List = REs})
         end
         local VehiclesSection = ESPTab:Section({Name = "Vehicles ESP", Side = "Right"}) do
             VehiclesSection:Toggle({Name = "Enabled", Flag = "AR2/ESP/Vehicles/Enabled", Value = false})
@@ -1025,22 +945,6 @@ local function GetCharactersInRadius(Path, Distance)
 
     return Closest
 end
-local function GetItemsInRadius(Distance)
-    local Closest = {}
-
-    for Index, Item in pairs(LootBins:GetChildren()) do
-        for Index, Group in pairs(Item:GetChildren()) do
-            local Part = Group:FindFirstChild("Part")
-            if not Part then continue end
-
-            local Magnitude = (Part.Position - Camera.CFrame.Position).Magnitude
-            if Distance >= Magnitude then table.insert(Closest, Group) end
-        end
-    end
-
-    return Closest
-end
-
 local function Length(Table) local Count = 0
     for Index, Value in pairs(Table) do Count += 1 end
     return Count
@@ -1724,32 +1628,6 @@ Radical.Utilities.NewThreadLoop(0.5, function()
     LightingState.BaseTime = Time + ((Window.Flags["AR2/Lighting/Time"] * (86400 / LightingState.CycleLength)) % 1440)
     --print(LightingState.StartTime, LightingState.CycleLength, LightingState.BaseTime)
 end)
-Radical.Utilities.NewThreadLoop(1, function()
-    if not Window.Flags["AR2/ESP/Items/Enabled"]
-    and not Window.Flags["AR2/ESP/Items/Containers/Enabled"] then return end
-
-    local Items = GetItemsInRadius(100)
-
-    if not PlayerClass.Character
-    or Interface:IsVisible("GameMenu")
-    or #Items == 0 then return end
-
-    for Index, Item in pairs(Items) do
-        if Interface:IsVisible("GameMenu")
-        or table.find(ItemMemory, Item) then continue end
-
-        task.spawn(function()
-            if Network:Fetch("Inventory Container Group Connect", Item) then
-                Network:Send("Inventory Container Group Disconnect")
-                table.insert(ItemMemory, Item)
-                local Pos = #ItemMemory
-                task.wait(30)
-                table.remove(ItemMemory, Pos)
-            end
-        end)
-    end
-end)
-
 for Index, Item in pairs(Loot:GetDescendants()) do
     if Item:IsA("CFrameValue") then
         local ItemData = ReplicatedStorage.ItemData:FindFirstChild(Item.Name, true)
@@ -1757,14 +1635,6 @@ for Index, Item in pairs(Loot:GetDescendants()) do
 
         Radical.Utilities.Drawing:AddObject(Item, Item.Name, Item.Value.Position,
             "AR2/ESP/Items", "AR2/ESP/Items/" .. ItemData.Parent.Name, Window.Flags
-        )
-    end
-end
-for Index, Event in pairs(Randoms:GetChildren()) do
-    for Index, Data in pairs(RandomEvents) do
-        if Event.Name ~= Data[1] then continue end --print(Event.Name)
-        Radical.Utilities.Drawing:AddObject(Event, Event.Name, Event.Value.Position,
-            "AR2/ESP/RandomEvents", "AR2/ESP/RandomEvents/" .. Event.Name, Window.Flags
         )
     end
 end
@@ -1813,21 +1683,6 @@ Loot.DescendantAdded:Connect(function(Item)
         )
     end
 end)
-Randoms.ChildAdded:Connect(function(Event)
-    for Index, Data in pairs(RandomEvents) do
-        if Event.Name ~= Data[1] then continue end --print(Event.Name)
-        Radical.Utilities.Drawing:AddObject(Event, Event.Name, Event.Value.Position,
-            "AR2/ESP/RandomEvents", "AR2/ESP/RandomEvents/" .. Event.Name, Window.Flags
-        )
-
-        if Window.Flags["AR2/ESP/RandomEvents/Enabled"]
-        and Window.Flags["AR2/ESP/RandomEvents/" .. Event.Name] then
-            local Distance = (Event.Value.Position - Camera.CFrame.Position).Magnitude
-            local Title = string.format("%s spawned (~%i studs away)", Event.Name, Distance)
-            Radical.Utilities.UI:Toast({Title = Title, Duration = 20})
-        end
-    end
-end)
 Corpses.ChildAdded:Connect(function(Corpse)
     if Corpse.Name == "Zombie" then return end
     repeat task.wait() until Corpse.PrimaryPart
@@ -1865,9 +1720,6 @@ end)
 
 Loot.DescendantRemoving:Connect(function(Item)
     Radical.Utilities.Drawing:RemoveObject(Item)
-end)
-Randoms.ChildRemoved:Connect(function(Event)
-    Radical.Utilities.Drawing:RemoveObject(Event)
 end)
 Corpses.ChildRemoved:Connect(function(Corpse)
     Radical.Utilities.Drawing:RemoveObject(Corpse)
