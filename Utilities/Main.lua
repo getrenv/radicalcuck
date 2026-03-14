@@ -264,8 +264,9 @@ function Utility.SetupWatermark(Self, Window)
             -- Update memory usage every UpdateMemoryInterval seconds
             if CurrentTime - LastMemoryUpdate >= UpdateMemoryInterval then
                 local Success, MemoryBytes = pcall(function()
-                    local stats = debug.getmemory and debug.getmemory() or 0
-                    return math.floor(stats / 1024)  -- Convert to KB
+                    -- Try gcinfo() which returns (allocated, used)
+                    local allocated, used = gcinfo()
+                    return math.floor(used / 1024)  -- Convert to KB
                 end)
                 LastMemory = Success and MemoryBytes or 0
                 LastMemoryUpdate = CurrentTime
