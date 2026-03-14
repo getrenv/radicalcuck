@@ -73,9 +73,10 @@ local OldFirstPerson = RenderStepConnections["FirstPerson"]
 local OldControl = HeartbeatConnections["Control"]
 
 local Notify = Instance.new("BindableEvent")
-Notify.Event:Connect(function(Text)
+local NotifyConnection = Notify.Event:Connect(function(Text)
     Radical.Utilities.UI:Toast(Text)
 end)
+table.insert(Radical.Utilities.Connections, NotifyConnection)
 
 local HitSounds = {
     {"AR2 Head", "2062016772"},

@@ -74,8 +74,16 @@ Radical.Loadstring = Radical.Loadstring:format(
 
 LocalPlayer.OnTeleport:Connect(function(State)
     if State == Enum.TeleportState.InProgress then
-        --ClearTeleportQueue()
+        if Radical.Utilities and Radical.Utilities.Cleanup then
+            Radical.Utilities.Cleanup()
+        end
         QueueOnTeleport(Radical.Loadstring)
+    end
+end)
+
+game:BindToClose(function()
+    if Radical.Utilities and Radical.Utilities.Cleanup then
+        Radical.Utilities.Cleanup()
     end
 end)
 

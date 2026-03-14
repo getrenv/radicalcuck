@@ -114,14 +114,17 @@ local NoClipObjects, NoClipEvent = {}, nil
 local SetIdentity = setthreadidentity
 
 local AddObject = Instance.new("BindableEvent")
-AddObject.Event:Connect(function(...)
+local AddObjectConnection = AddObject.Event:Connect(function(...)
     Radical.Utilities.Drawing:AddObject(...)
 end)
 
 local RemoveObject = Instance.new("BindableEvent")
-RemoveObject.Event:Connect(function(...)
+local RemoveObjectConnection = RemoveObject.Event:Connect(function(...)
     Radical.Utilities.Drawing:RemoveObject(...)
 end)
+
+table.insert(Radical.Utilities.Connections, AddObjectConnection)
+table.insert(Radical.Utilities.Connections, RemoveObjectConnection)
 
 local WPlayersFolder = Workspace:FindFirstChild("Players")
 local function GetPlayerCharacter(Player)
@@ -1204,22 +1207,22 @@ for Index, Vehicle in pairs(Vehicles:GetChildren()) do
     Radical.Utilities.Drawing:AddObject(Vehicle, Vehicle.Name, Vehicle.PrimaryPart, "AR2/ESP/Vehicles", "AR2/ESP/Vehicles", Window.Flags)
 end
 
-Corpses.ChildAdded:Connect(function(Corpse)
+table.insert(Radical.Utilities.Connections, Corpses.ChildAdded:Connect(function(Corpse)
     if Corpse.Name == "Zombie" then return end
     repeat task.wait() until Corpse.PrimaryPart
     Radical.Utilities.Drawing:AddObject(Corpse, Corpse.Name, Corpse.PrimaryPart, "AR2/ESP/Corpses", "AR2/ESP/Corpses", Window.Flags)
-end)
-Zombies.ChildAdded:Connect(function(Zombie)
+end))
+table.insert(Radical.Utilities.Connections, Zombies.ChildAdded:Connect(function(Zombie)
     repeat task.wait() until Zombie.PrimaryPart
     Radical.Utilities.Drawing:AddObject(Zombie, Zombie.Name, Zombie.PrimaryPart, "AR2/ESP/Zombies", "AR2/ESP/Zombies", Window.Flags)
-end)
-Vehicles.ChildAdded:Connect(function(Vehicle)
+end))
+table.insert(Radical.Utilities.Connections, Vehicles.ChildAdded:Connect(function(Vehicle)
     repeat task.wait() until Vehicle.PrimaryPart
     Radical.Utilities.Drawing:AddObject(Vehicle, Vehicle.Name, Vehicle.PrimaryPart, "AR2/ESP/Vehicles", "AR2/ESP/Vehicles", Window.Flags)
-end)
+end))
 
-Corpses.ChildRemoved:Connect(function(Corpse) Radical.Utilities.Drawing:RemoveObject(Corpse) end)
-Zombies.ChildRemoved:Connect(function(Zombie) Radical.Utilities.Drawing:RemoveObject(Zombie) end)
+table.insert(Radical.Utilities.Connections, Corpses.ChildRemoved:Connect(function(Corpse) Radical.Utilities.Drawing:RemoveObject(Corpse) end))
+table.insert(Radical.Utilities.Connections, Zombies.ChildRemoved:Connect(function(Zombie) Radical.Utilities.Drawing:RemoveObject(Zombie) end))
 Vehicles.ChildRemoved:Connect(function(Vehicle) Radical.Utilities.Drawing:RemoveObject(Vehicle) end)
 
 Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()

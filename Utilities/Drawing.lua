@@ -95,10 +95,10 @@ end
     return FOV * (1 + (80 - Camera.FieldOfView) / 100)
 end]]
 local function AntiAliasingXY(X, Y)
-    return V2New(Floor(X), Floor(Y))
+    return V2New(math.round(X), math.round(Y))
 end
 local function AntiAliasingP(P)
-    return V2New(Floor(P.X), Floor(P.Y))
+    return V2New(math.round(P.X), math.round(P.Y))
 end
 local function WorldToScreen(WorldPosition)
     local Screen, OnScreen = WTVP(Camera, WorldPosition)
@@ -222,9 +222,23 @@ if game.GameId == 1168263273 or game.GameId == 3360073263 then -- Bad Business
     end
 elseif game.GameId == 358276974 or game.GameId == 3495983524 then -- Apocalypse Rising 2
     function GetHealth(Target, Character, Mode)
+        if not Character then return 100, 100, true end
+        
+        -- Try Framework health system first
+        local HealthComponent = Character:FindFirstChild("Health")
+        if HealthComponent and HealthComponent:FindFirstChild("Value") then
+            local MaxHealth = 100
+            local CurrentHealth = HealthComponent.Value.Value or 100
+            return CurrentHealth, MaxHealth, CurrentHealth > 0
+        end
+        
+        -- Fallback to Humanoid
         local Humanoid = Character:FindFirstChildOfClass("Humanoid")
-        if not Humanoid then return 100, 100, true end
-        return Humanoid.Health, Humanoid.MaxHealth, Humanoid.Health > 0
+        if Humanoid then
+            return Humanoid.Health, Humanoid.MaxHealth, Humanoid.Health > 0
+        end
+        
+        return 100, 100, true
     end
 
     function GetWeapon(Target, Character, Mode)
@@ -588,7 +602,7 @@ function DrawingLibrary.Update(ESP, Target)
                         local Size = GetFlag(Flags, Flag, "/Name/Size")
                         local Autoscale = GetFlag(Flags, Flag, "/Name/Autoscale")
                         --local Font = GetFont(GetFlag(ESP.Flags, ESP.Flag, "/Name/Font")[1])
-                        Autoscale = Floor(GetScaleFactor(Autoscale, Size, Distance))
+                        Autoscale = math.ceil(GetScaleFactor(Autoscale, Size, Distance))
 
                         Transparency = 1 - GetFlag(Flags, Flag, "/Name/Transparency")
                         Outline = GetFlag(Flags, Flag, "/Name/Outline")
@@ -1020,7 +1034,7 @@ end
                             local Size = GetFlag(Flags, Flag, "/Name/Size")
                             local Autoscale = GetFlag(Flags, Flag, "/Name/Autoscale")
                             --local Font = GetFont(GetFlag(ESP.Flags, ESP.Flag, "/Name/Font")[1])
-                            Autoscale = Floor(GetScaleFactor(Autoscale, Size, Distance))
+                            Autoscale = math.ceil(GetScaleFactor(Autoscale, Size, Distance))
 
                             Transparency = 1 - GetFlag(Flags, Flag, "/Name/Transparency")
                             Outline = GetFlag(Flags, Flag, "/Name/Outline")
@@ -1247,10 +1261,10 @@ function DrawingLibrary.AddESP(Self, Target, Mode, Flag, Flags)
                 Main = AddDrawing("Triangle", { Visible = false, ZIndex = 1 }),
             },
             Textboxes = {
-                Name = AddDrawing("Text", { Visible = false, ZIndex = 0, Center = true, Outline = true, Color = WhiteColor, Font = Fonts.Plex }),
-                Distance = AddDrawing("Text", { Visible = false, ZIndex = 0, Center = true, Outline = true, Color = WhiteColor, Font = Fonts.Plex }),
-                Health = AddDrawing("Text", { Visible = false, ZIndex = 0, Center = false, Outline = true, Color = WhiteColor, Font = Fonts.Plex }),
-                Weapon = AddDrawing("Text", { Visible = false, ZIndex = 0, Center = false, Outline = true, Color = WhiteColor, Font = Fonts.Plex })
+                Name = AddDrawing("Text", { Visible = false, ZIndex = 1, Center = true, Outline = true, Color = WhiteColor, Font = Fonts.Plex }),
+                Distance = AddDrawing("Text", { Visible = false, ZIndex = 1, Center = true, Outline = true, Color = WhiteColor, Font = Fonts.Plex }),
+                Health = AddDrawing("Text", { Visible = false, ZIndex = 1, Center = false, Outline = true, Color = WhiteColor, Font = Fonts.Plex }),
+                Weapon = AddDrawing("Text", { Visible = false, ZIndex = 1, Center = false, Outline = true, Color = WhiteColor, Font = Fonts.Plex })
             },
             --Test = AddDrawing("Square", { Visible = true, ZIndex = -1, Filled = true })
         }
@@ -1694,7 +1708,7 @@ end)
                             local Size = GetFlag(ESP.Flags, ESP.Flag, "/Name/Size")
                             local Autoscale = GetFlag(ESP.Flags, ESP.Flag, "/Name/Autoscale")
                             --local Font = GetFont(GetFlag(ESP.ESP.Flags, ESP.ESP.Flag, "/Name/Font")[1])
-                            Autoscale = Floor(GetScaleFactor(Autoscale, Size, ESP.Target.Distance))
+                            Autoscale = math.ceil(GetScaleFactor(Autoscale, Size, ESP.Target.Distance))
 
                             Transparency = 1 - GetFlag(ESP.Flags, ESP.Flag, "/Name/Transparency")
                             Outline = GetFlag(ESP.Flags, ESP.Flag, "/Name/Outline")

@@ -151,9 +151,9 @@ for Index, Player in pairs(PlayerService:GetPlayers()) do
     if Player == LocalPlayer then continue end
     Radical.Utilities.Drawing:AddESP(Player, "Player", "ESP/Player", Window.Flags)
 end
-PlayerService.PlayerAdded:Connect(function(Player)
+table.insert(Radical.Utilities.Connections, PlayerService.PlayerAdded:Connect(function(Player)
     Radical.Utilities.Drawing:AddESP(Player, "Player", "ESP/Player", Window.Flags)
-end)
-PlayerService.PlayerRemoving:Connect(function(Player)
+end))
+table.insert(Radical.Utilities.Connections, PlayerService.PlayerRemoving:Connect(function(Player)
     Radical.Utilities.Drawing:RemoveESP(Player)
-end)
+end))

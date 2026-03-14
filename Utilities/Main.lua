@@ -10,7 +10,7 @@ local Lighting = game:GetService("Lighting")
 --local CoreGui = game:GetService("CoreGui")
 local Stats = game:GetService("Stats")
 
-local Utility = { DefaultLighting = {} }
+local Utility = { DefaultLighting = {}, Threads = {}, Connections = {} }
 
 local Camera = Workspace.CurrentCamera
 local LocalPlayer = PlayerService.LocalPlayer
@@ -135,18 +135,22 @@ function Utility.MakeBeam(Origin, Position, Color)
     return Beam
 end
 function Utility.NewThreadLoop(Wait, Function)
-    task.spawn(function()
+    local thread = nil
+    thread = task.spawn(function()
+        table.insert(Utility.Threads, thread)
         while true do
             local Delta = task.wait(Wait)
             local Success, Error = pcall(Function, Delta)
             if not Success then
                 warn("thread error " .. Error)
             elseif Error == "break" then
-                --print("thread stopped")
                 break
             end
         end
+        local idx = table.find(Utility.Threads, thread)
+        if idx then table.remove(Utility.Threads, idx) end
     end)
+    return thread
 end
 function Utility.FixUpValue(fn, hook, gvar)
     if gvar then
@@ -159,6 +163,29 @@ function Utility.FixUpValue(fn, hook, gvar)
             return hook(old, ...)
         end)
     end
+end
+
+function Utility.CleanupThreads()
+    for _, Thread in pairs(Utility.Threads) do
+        if type(Thread) == "thread" then
+            pcall(function() task.cancel(Thread) end)
+        end
+    end
+    Utility.Threads = {}
+end
+
+function Utility.CleanupConnections()
+    for _, Connection in pairs(Utility.Connections) do
+        if Connection and typeof(Connection) == "RBXScriptConnection" then
+            pcall(function() Connection:Disconnect() end)
+        end
+    end
+    Utility.Connections = {}
+end
+
+function Utility.Cleanup()
+    Utility.CleanupThreads()
+    Utility.CleanupConnections()
 end
 
 function Utility.ReJoin()
@@ -218,7 +245,7 @@ end
 function Utility.SetupWatermark(Self, Window)
     local GetFPS = Self:SetupFPS()
 
-    RunService.Heartbeat:Connect(function()
+    local conn = RunService.Heartbeat:Connect(function()
         if Window.Watermark.Enabled then
             Window.Watermark.Title = string.format(
                 "Radical Hub    %s    %i FPS    %i MS",
@@ -226,6 +253,7 @@ function Utility.SetupWatermark(Self, Window)
             )
         end
     end)
+    table.insert(Utility.Connections, conn)
 end
 
 --[[
