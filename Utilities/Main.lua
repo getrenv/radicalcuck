@@ -253,12 +253,28 @@ function Utility.InitAutoLoad(Window)
 end
 function Utility.SetupWatermark(Self, Window)
     local GetFPS = Self:SetupFPS()
+    local LastMemoryUpdate = 0
+    local LastMemory = 0
+    local UpdateMemoryInterval = 1  -- Update memory every 1 second
 
     local conn = RunService.Heartbeat:Connect(function()
         if Window.Watermark.Enabled then
+            local CurrentTime = tick()
+            
+            -- Update memory usage every UpdateMemoryInterval seconds
+            if CurrentTime - LastMemoryUpdate >= UpdateMemoryInterval then
+                local Success, MemoryBytes = pcall(function()
+                    local stats = debug.getmemory and debug.getmemory() or 0
+                    return math.floor(stats / 1024)  -- Convert to KB
+                end)
+                LastMemory = Success and MemoryBytes or 0
+                LastMemoryUpdate = CurrentTime
+            end
+            
+            -- Format: Time | FPS | Ping | Memory
             Window.Watermark.Title = string.format(
-                "Radical Hub    %s    %i FPS    %i MS",
-                os.date("%X"), GetFPS(), math.round(Ping:GetValue())
+                "Radical Hub    %s    %i FPS    %i MS    %i KB",
+                os.date("%X"), GetFPS(), math.round(Ping:GetValue()), LastMemory
             )
         end
     end)

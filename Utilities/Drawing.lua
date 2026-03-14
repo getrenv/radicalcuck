@@ -40,6 +40,10 @@ local BlackColor = ColorNew(0, 0, 0)
 local LerpColor = BlackColor.Lerp
 local Fonts = Drawing.Fonts
 
+-- Performance monitoring
+local LastMemory = 0
+local MemoryUpdateTime = 0
+
 local DrawingLibrary = {
     ESP = {},--setmetatable({}, { __mode = "kv" }),
     ObjectESP = {},--setmetatable({}, { __mode = "kv" }),
@@ -88,6 +92,16 @@ end
 local function GetScaleFactor(Enabled, Size, Distance)
     if not Enabled then return Size end
     return Max(1, Size / (Distance * Tan(Rad(Camera.FieldOfView / 2)) * 10) * 1000)
+end
+
+-- Dynamic FOV calculation based on camera FOV
+local function CalculateFOVRadius(FOVScaleFactor)
+    local CameraFOV = math.clamp(Camera.FieldOfView, 1, 120)
+    local ViewportSize = Camera.ViewportSize
+    
+    -- Calculate game_fov = (fov_scale / camera_fov) * height * (height / width)
+    local GameFOV = (FOVScaleFactor / CameraFOV) * ViewportSize.Y * (ViewportSize.Y / ViewportSize.X)
+    return math.max(1, GameFOV)
 end
 --[[local function DynamicFOV(Enabled, FOV)
     if not Enabled then return FOV end
@@ -1352,6 +1366,7 @@ end
 function DrawingLibrary.SetupFOV(Flag, Flags)
     local FOV = AddDrawing("Circle", { ZIndex = 4 })
     local FOVOutline = AddDrawing("Circle", { ZIndex = 3 })
+    local LastCachedFOV = {}
 
     RunService.Heartbeat:Connect(function()
         local Visible = GetFlag(Flags, Flag, "/Enabled")
@@ -1365,30 +1380,49 @@ function DrawingLibrary.SetupFOV(Flag, Flags)
             local Thickness = GetFlag(Flags, Flag, "/FOV/Thickness")
             local NumSides = GetFlag(Flags, Flag, "/FOV/NumSides")
             local Filled = GetFlag(Flags, Flag, "/FOV/Filled")
-            local Radius = GetFlag(Flags, Flag, "/FOV/Radius")
+            local FOVScale = GetFlag(Flags, Flag, "/FOV/Radius") / 100  -- Treat slider as scale factor
             local Color = GetFlag(Flags, Flag, "/FOV/Color")
             local Transparency = 1 - Color[4]
             Color = Color[6]
-
-            FOV.Color = Color
-
-            FOV.Transparency = Transparency
-            FOVOutline.Transparency = Transparency
-
-            FOV.Thickness = Thickness
-            FOVOutline.Thickness = Thickness + 2
             
-            FOV.NumSides = NumSides
-            FOVOutline.NumSides = NumSides
+            -- Calculate dynamic FOV radius based on camera FOV
+            local Radius = CalculateFOVRadius(FOVScale)
 
-            FOV.Filled = Filled
-            --FOVOutline.Filled = Filled
-
-            FOV.Radius = Radius
-            FOVOutline.Radius = Radius
-
-            FOV.Position = MouseLocation
-            FOVOutline.Position = MouseLocation
+            -- Cache updates to reduce property assignments
+            if LastCachedFOV.Color ~= Color then
+                FOV.Color = Color
+                FOVOutline.Color = Color
+                LastCachedFOV.Color = Color
+            end
+            if LastCachedFOV.Transparency ~= Transparency then
+                FOV.Transparency = Transparency
+                FOVOutline.Transparency = Transparency
+                LastCachedFOV.Transparency = Transparency
+            end
+            if LastCachedFOV.Thickness ~= Thickness then
+                FOV.Thickness = Thickness
+                FOVOutline.Thickness = Thickness + 2
+                LastCachedFOV.Thickness = Thickness
+            end
+            if LastCachedFOV.NumSides ~= NumSides then
+                FOV.NumSides = NumSides
+                FOVOutline.NumSides = NumSides
+                LastCachedFOV.NumSides = NumSides
+            end
+            if LastCachedFOV.Filled ~= Filled then
+                FOV.Filled = Filled
+                LastCachedFOV.Filled = Filled
+            end
+            if LastCachedFOV.Radius ~= Radius then
+                FOV.Radius = Radius
+                FOVOutline.Radius = Radius
+                LastCachedFOV.Radius = Radius
+            end
+            if LastCachedFOV.Position ~= MouseLocation then
+                FOV.Position = MouseLocation
+                FOVOutline.Position = MouseLocation
+                LastCachedFOV.Position = MouseLocation
+            end
         end
     end)
 end
