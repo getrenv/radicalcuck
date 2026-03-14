@@ -717,7 +717,7 @@ local function GetEnemyForMelee(CountPlayers, CountZombies)
     if not PlayerCharacter then return end
     local Distance, Closest = 10, {}
     if CountZombies then
-        for Index, Zombie in pairs(Zombies.Mobs:GetChildren()) do
+        for Index, Zombie in pairs(Zombies:GetChildren()) do
             local PrimaryPart = Zombie.PrimaryPart
             if not PrimaryPart then continue end
             local Magnitude = (PrimaryPart.Position - PlayerCharacter.RootPart.Position).Magnitude
@@ -1195,17 +1195,9 @@ for Index, Corpse in pairs(Corpses:GetChildren()) do
     if not Corpse.PrimaryPart then continue end
     Radical.Utilities.Drawing:AddObject(Corpse, Corpse.Name, Corpse.PrimaryPart, "AR2/ESP/Corpses", "AR2/ESP/Corpses", Window.Flags)
 end
-for Index, Zombie in pairs(Zombies.Mobs:GetChildren()) do
+for Index, Zombie in pairs(Zombies:GetChildren()) do
     if not Zombie.PrimaryPart then continue end
-    local Config = require(Zombies.Configs[Zombie.Name])
-    if not Config.Inherits then continue end
-    for Index, Inherit in pairs(Config.Inherits) do
-        for Index, Data in pairs(ZombieInherits) do
-            if Inherit ~= Data[1] then continue end
-            local InheritName = Inherit:gsub("Presets.", ""):gsub(" ", "")
-            Radical.Utilities.Drawing:AddObject(Zombie, Zombie.Name, Zombie.PrimaryPart, "AR2/ESP/Zombies", "AR2/ESP/Zombies/"..InheritName, Window.Flags)
-        end
-    end
+    Radical.Utilities.Drawing:AddObject(Zombie, Zombie.Name, Zombie.PrimaryPart, "AR2/ESP/Zombies", "AR2/ESP/Zombies", Window.Flags)
 end
 for Index, Vehicle in pairs(Vehicles:GetChildren()) do
     if not Vehicle.PrimaryPart then continue end
@@ -1217,17 +1209,9 @@ Corpses.ChildAdded:Connect(function(Corpse)
     repeat task.wait() until Corpse.PrimaryPart
     Radical.Utilities.Drawing:AddObject(Corpse, Corpse.Name, Corpse.PrimaryPart, "AR2/ESP/Corpses", "AR2/ESP/Corpses", Window.Flags)
 end)
-Zombies.Mobs.ChildAdded:Connect(function(Zombie)
+Zombies.ChildAdded:Connect(function(Zombie)
     repeat task.wait() until Zombie.PrimaryPart
-    local Config = require(Zombies.Configs[Zombie.Name])
-    if not Config.Inherits then return end
-    for Index, Inherit in pairs(Config.Inherits) do
-        for Index, Data in pairs(ZombieInherits) do
-            if Inherit ~= Data[1] then continue end
-            local InheritName = Inherit:gsub("Presets.", ""):gsub(" ", "")
-            Radical.Utilities.Drawing:AddObject(Zombie, Zombie.Name, Zombie.PrimaryPart, "AR2/ESP/Zombies", "AR2/ESP/Zombies/"..InheritName, Window.Flags)
-        end
-    end
+    Radical.Utilities.Drawing:AddObject(Zombie, Zombie.Name, Zombie.PrimaryPart, "AR2/ESP/Zombies", "AR2/ESP/Zombies", Window.Flags)
 end)
 Vehicles.ChildAdded:Connect(function(Vehicle)
     repeat task.wait() until Vehicle.PrimaryPart
@@ -1235,7 +1219,7 @@ Vehicles.ChildAdded:Connect(function(Vehicle)
 end)
 
 Corpses.ChildRemoved:Connect(function(Corpse) Radical.Utilities.Drawing:RemoveObject(Corpse) end)
-Zombies.Mobs.ChildRemoved:Connect(function(Zombie) Radical.Utilities.Drawing:RemoveObject(Zombie) end)
+Zombies.ChildRemoved:Connect(function(Zombie) Radical.Utilities.Drawing:RemoveObject(Zombie) end)
 Vehicles.ChildRemoved:Connect(function(Vehicle) Radical.Utilities.Drawing:RemoveObject(Vehicle) end)
 
 Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
