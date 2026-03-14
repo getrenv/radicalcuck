@@ -95,24 +95,31 @@ local function GetScaleFactor(Enabled, Size, Distance)
 end
 
 -- Dynamic FOV calculation based on camera FOV
-local function CalculateFOVRadius(FOVScaleFactor)
+local function CalculateFOVRadius(FOVValue)
+    -- FOV adjusts based on camera FieldOfView and aspect ratio
     local CameraFOV = math.clamp(Camera.FieldOfView, 1, 120)
     local ViewportSize = Camera.ViewportSize
+    local AspectRatio = ViewportSize.Y / ViewportSize.X
     
-    -- Calculate game_fov = (fov_scale / camera_fov) * height * (height / width)
-    local GameFOV = (FOVScaleFactor / CameraFOV) * ViewportSize.Y * (ViewportSize.Y / ViewportSize.X)
-    return math.max(1, GameFOV)
+    -- Adjust radius based on camera FOV for smooth zooming
+    local FOVMultiplier = 70 / CameraFOV  -- Normalize to 70 FOV as baseline
+    return FOVValue * FOVMultiplier * AspectRatio
 end
 --[[local function DynamicFOV(Enabled, FOV)
     if not Enabled then return FOV end
     --return FOV / (Camera.FieldOfView / 80)
     return FOV * (1 + (80 - Camera.FieldOfView) / 100)
 end]]
+-- Floor-based antialiasing for crisp pixel-perfect coordinates
 local function AntiAliasingXY(X, Y)
-    return V2New(math.round(X), math.round(Y))
+    return V2New(math.floor(X + 0.5), math.floor(Y + 0.5))
 end
 local function AntiAliasingP(P)
-    return V2New(math.round(P.X), math.round(P.Y))
+    return V2New(math.floor(P.X + 0.5), math.floor(P.Y + 0.5))
+end
+-- Text-specific antialiasing: snap to pixel grid without rounding offset
+local function TextAntiAliasingXY(X, Y)
+    return V2New(math.floor(X), math.floor(Y))
 end
 local function WorldToScreen(WorldPosition)
     local Screen, OnScreen = WTVP(Camera, WorldPosition)
@@ -629,7 +636,7 @@ function DrawingLibrary.Update(ESP, Target)
                             Textboxes.Name.Text = Mode == "Player" and Target.Name
                             or (InEnemyTeam and "Enemy NPC" or "Ally NPC")
 
-                            Textboxes.Name.Position = AntiAliasingXY(
+                            Textboxes.Name.Position = TextAntiAliasingXY(
                                 ScreenPosition.X,
                                 ScreenPosition.Y - (BoxSize.Y / 2) - Textboxes.Name.TextBounds.Y - ThicknessAdjust - 2
                             )
@@ -642,7 +649,7 @@ function DrawingLibrary.Update(ESP, Target)
                             Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
 
                             local HealthPositionX = ESP.Drawing.HealthBar.Main.Visible and ((ScreenPosition.X - (BoxSize.X / 2)) - Textboxes.Health.TextBounds.X - (Thickness + ThicknessAdjust + 5)) or ((ScreenPosition.X - (BoxSize.X / 2)) - Textboxes.Health.TextBounds.X - ThicknessAdjust - 2)
-                            Textboxes.Health.Position = AntiAliasingXY(
+                            Textboxes.Health.Position = TextAntiAliasingXY(
                                 HealthPositionX,
                                 (ScreenPosition.Y - (BoxSize.Y / 2)) - ThicknessAdjust - 1
                             )
@@ -657,7 +664,7 @@ function DrawingLibrary.Update(ESP, Target)
                             Textboxes.Distance.Size = Autoscale
                             Textboxes.Distance.Text = tostring(math.floor(Distance)) .. " studs"
 
-                            Textboxes.Distance.Position = AntiAliasingXY(
+Textboxes.Distance.Position = TextAntiAliasingXY(
                                 ScreenPosition.X,
                                 (ScreenPosition.Y + (BoxSize.Y / 2)) + ThicknessAdjust + 2
                             )
@@ -674,7 +681,7 @@ function DrawingLibrary.Update(ESP, Target)
                             Textboxes.Weapon.Size = Autoscale
                             Textboxes.Weapon.Text = Weapon
 
-                            Textboxes.Weapon.Position = AntiAliasingXY(
+Textboxes.Weapon.Position = TextAntiAliasingXY(
                                 (ScreenPosition.X + (BoxSize.X / 2)) + ThicknessAdjust + 2,
                                 ScreenPosition.Y - (BoxSize.Y / 2) - ThicknessAdjust - 1
                             )
@@ -1061,7 +1068,7 @@ end
                                 Textboxes.Name.Text = Mode == "Player" and Target.Name
                                 or (InEnemyTeam and "Enemy NPC" or "Ally NPC")
 
-                                Textboxes.Name.Position = AntiAliasingXY(
+                                Textboxes.Name.Position = TextAntiAliasingXY(
                                     ScreenPosition.X,
                                     ScreenPosition.Y - (BoxSize.Y / 2) - Textboxes.Name.TextBounds.Y - ThicknessAdjust - 2
                                 )
@@ -1074,7 +1081,7 @@ end
                                 Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
 
                                 local HealthPositionX = ESP.Drawing.HealthBar.Main.Visible and ((ScreenPosition.X - (BoxSize.X / 2)) - Textboxes.Health.TextBounds.X - (Thickness + ThicknessAdjust + 5)) or ((ScreenPosition.X - (BoxSize.X / 2)) - Textboxes.Health.TextBounds.X - ThicknessAdjust - 2)
-                                Textboxes.Health.Position = AntiAliasingXY(
+                                Textboxes.Health.Position = TextAntiAliasingXY(
                                     HealthPositionX,
                                     (ScreenPosition.Y - (BoxSize.Y / 2)) - ThicknessAdjust - 1
                                 )
@@ -1089,7 +1096,7 @@ end
                                 Textboxes.Distance.Size = Autoscale
                                 Textboxes.Distance.Text = tostring(math.floor(Distance)) .. " studs"
 
-                                Textboxes.Distance.Position = AntiAliasingXY(
+                                Textboxes.Distance.Position = TextAntiAliasingXY(
                                     ScreenPosition.X,
                                     (ScreenPosition.Y + (BoxSize.Y / 2)) + ThicknessAdjust + 2
                                 )
@@ -1106,7 +1113,7 @@ end
                                 Textboxes.Weapon.Size = Autoscale
                                 Textboxes.Weapon.Text = Weapon
 
-                                Textboxes.Weapon.Position = AntiAliasingXY(
+                                Textboxes.Weapon.Position = TextAntiAliasingXY(
                                     (ScreenPosition.X + (BoxSize.X / 2)) + ThicknessAdjust + 2,
                                     ScreenPosition.Y - (BoxSize.Y / 2) - ThicknessAdjust - 1
                                 )
@@ -1380,7 +1387,7 @@ function DrawingLibrary.SetupFOV(Flag, Flags)
             local Thickness = GetFlag(Flags, Flag, "/FOV/Thickness")
             local NumSides = GetFlag(Flags, Flag, "/FOV/NumSides")
             local Filled = GetFlag(Flags, Flag, "/FOV/Filled")
-            local FOVScale = GetFlag(Flags, Flag, "/FOV/Radius") / 100  -- Treat slider as scale factor
+            local FOVScale = GetFlag(Flags, Flag, "/FOV/Radius")  -- Use slider value directly
             local Color = GetFlag(Flags, Flag, "/FOV/Color")
             local Transparency = 1 - Color[4]
             Color = Color[6]
@@ -1459,7 +1466,7 @@ DrawingLibrary.Connection = RunService.RenderStepped:Connect(function()
     ESP.Name.Transparency = 1 - Color[4]
     ESP.Name.Color = Color[6]
 
-            ESP.Name.Position = ESP.Target.ScreenPosition
+            ESP.Name.Position = TextAntiAliasingXY(ESP.Target.ScreenPosition.X, ESP.Target.ScreenPosition.Y)
             ESP.Name.Text = string.format("%s\n%i studs", ESP.Target.Name, ESP.Target.Distance)
         end
     end
@@ -1755,7 +1762,7 @@ end)
                                 Textboxes.Name.Text = ESP.Mode == "Player" and Target.Name
                                 or (InEnemyTeam and "Enemy NPC" or "Ally NPC")
 
-                                Textboxes.Name.Position = AntiAliasingXY(
+                                Textboxes.Name.Position = TextAntiAliasingXY(
                                     ESP.Target.ScreenPosition.X,
                                     ESP.Target.ScreenPosition.Y - (BoxSize.Y / 2) - Textboxes.Name.TextBounds.Y - ThicknessAdjust - 2
                                 )
@@ -1768,7 +1775,7 @@ end)
                                 Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
 
                                 local HealthPositionX = ESP.Drawing.HealthBar.Main.Visible and ((ESP.Target.ScreenPosition.X - (BoxSize.X / 2)) - Textboxes.Health.TextBounds.X - (Thickness + ThicknessAdjust + 5)) or ((ESP.Target.ScreenPosition.X - (BoxSize.X / 2)) - Textboxes.Health.TextBounds.X - ThicknessAdjust - 2)
-                                Textboxes.Health.Position = AntiAliasingXY(
+                                Textboxes.Health.Position = TextAntiAliasingXY(
                                     HealthPositionX,
                                     (ESP.Target.ScreenPosition.Y - (BoxSize.Y / 2)) - ThicknessAdjust - 1
                                 )
@@ -1783,7 +1790,7 @@ end)
                                 Textboxes.Distance.Size = Autoscale
                                 Textboxes.Distance.Text = tostring(math.floor(ESP.Target.Distance)) .. " studs"
 
-                                Textboxes.Distance.Position = AntiAliasingXY(
+                                Textboxes.Distance.Position = TextAntiAliasingXY(
                                     ESP.Target.ScreenPosition.X,
                                     (ESP.Target.ScreenPosition.Y + (BoxSize.Y / 2)) + ThicknessAdjust + 2
                                 )
@@ -1800,7 +1807,7 @@ end)
                                 Textboxes.Weapon.Size = Autoscale
                                 Textboxes.Weapon.Text = Weapon
 
-                                Textboxes.Weapon.Position = AntiAliasingXY(
+                                Textboxes.Weapon.Position = TextAntiAliasingXY(
                                     (ESP.Target.ScreenPosition.X + (BoxSize.X / 2)) + ThicknessAdjust + 2,
                                     ESP.Target.ScreenPosition.Y - (BoxSize.Y / 2) - ThicknessAdjust - 1
                                 )
