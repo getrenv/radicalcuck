@@ -1406,9 +1406,10 @@ DrawingLibrary.Connection = RunService.RenderStepped:Connect(function()
         ESP.Name.Visible = (ESP.Target.OnScreen and ESP.Target.InTheRange) or false
 
         if ESP.Name.Visible then
-            local Color = GetFlag(ESP.Flags, ESP.Flag, "/Color")
-            ESP.Name.Transparency = 1 - Color[4]
-            ESP.Name.Color = Color[6]
+    local Color = GetFlag(ESP.Flags, ESP.Flag, "/Color") or GetFlag(ESP.Flags, ESP.GlobalFlag, "/Color") or {0, 0, 0, 1, false, Color3.new(1, 0, 1)}
+    if not Color then ESP.Name.Visible = false continue end
+    ESP.Name.Transparency = 1 - Color[4]
+    ESP.Name.Color = Color[6]
 
             ESP.Name.Position = ESP.Target.ScreenPosition
             ESP.Name.Text = string.format("%s\n%i studs", ESP.Target.Name, ESP.Target.Distance)
