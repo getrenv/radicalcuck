@@ -76,9 +76,16 @@ end
 local NetworkSyncHeartbeat
 local InteractHeartbeat, FindItemData
 for Index, Table in pairs(getgc(true)) do
-    if type(Table) == "table" and rawget(Table, "Rate") == 0.05 then
-        InteractHeartbeat = Table.Action
-        FindItemData = getupvalue(InteractHeartbeat, 11)
+    if type(Table) == "table" and rawget(Table, "Rate") == 0.1 then
+        local action = rawget(Table, "Action")
+        if type(action) == "function" then
+            local uv5 = debug.getupvalue(action, 5)
+            if type(uv5) == "function" then
+                InteractHeartbeat = action
+                FindItemData = uv5
+                break
+            end
+        end
     end
 end
 
@@ -1104,7 +1111,7 @@ setupvalue(Firearm, 7, function(...)
     return AnimatedReload(...)
 end)
 if InteractHeartbeat and FindItemData then
-    setupvalue(InteractHeartbeat, 11, function(...)
+    setupvalue(InteractHeartbeat, 5, function(...)
         if Window.Flags["AR2/InstantSearch"] then
             local ReturnArgs = {FindItemData(...)}
             if ReturnArgs[4] then ReturnArgs[4] = 0 end
