@@ -1103,16 +1103,18 @@ setupvalue(Firearm, 7, function(...)
 
     return AnimatedReload(...)
 end)
-setupvalue(InteractHeartbeat, 11, function(...)
-    if Window.Flags["AR2/InstantSearch"] then
-        local ReturnArgs = {FindItemData(...)}
-        if ReturnArgs[4] then ReturnArgs[4] = 0 end
+if InteractHeartbeat and FindItemData then
+    setupvalue(InteractHeartbeat, 11, function(...)
+        if Window.Flags["AR2/InstantSearch"] then
+            local ReturnArgs = {FindItemData(...)}
+            if ReturnArgs[4] then ReturnArgs[4] = 0 end
 
-        return unpack(ReturnArgs)
-    end
+            return unpack(ReturnArgs)
+        end
 
-    return FindItemData(...)
-end)
+        return FindItemData(...)
+    end)
+end
 
 local OldFire; OldFire = hookfunction(Bullets.Fire, newcclosure(function(Self, ...)
     if SilentAim and math.random(100) <= Window.Flags["SilentAim/HitChance"] then
