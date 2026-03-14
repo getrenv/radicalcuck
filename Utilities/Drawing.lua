@@ -222,16 +222,17 @@ if game.GameId == 1168263273 or game.GameId == 3360073263 then -- Bad Business
     end
 elseif game.GameId == 358276974 or game.GameId == 3495983524 then -- Apocalypse Rising 2
     function GetHealth(Target, Character, Mode)
-        local Health = Target.Stats.Health
-        local Bonus = Target.Stats.HealthBonus
-
-        return Health.Value + Bonus.Value,
-        100 + Bonus.Value, Health.Value > 0
+        local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+        if not Humanoid then return 100, 100, true end
+        return Humanoid.Health, Humanoid.MaxHealth, Humanoid.Health > 0
     end
 
     function GetWeapon(Target, Character, Mode)
-        local Equipped = Character.Equipped:GetChildren()
-        return Equipped[1] and Equipped[1].Name or "Hands"
+        local ok, result = pcall(function()
+            local Equipped = Character.Equipped:GetChildren()
+            return Equipped[1] and Equipped[1].Name or "Hands"
+        end)
+        return ok and result or "Hands"
     end
 
     -- TODO: Squad GetTeam function
