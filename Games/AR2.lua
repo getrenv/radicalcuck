@@ -79,8 +79,8 @@ for Index, Table in pairs(getgc(true)) do
     if type(Table) == "table" and rawget(Table, "Rate") == 0.1 then
         local action = rawget(Table, "Action")
         if type(action) == "function" then
-            local uv5 = debug.getupvalue(action, 5)
-            if type(uv5) == "function" then
+            local success, uv5 = pcall(debug.getupvalue, action, 5)
+            if success and type(uv5) == "function" then
                 InteractHeartbeat = action
                 FindItemData = uv5
                 break
