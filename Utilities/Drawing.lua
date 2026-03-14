@@ -630,7 +630,6 @@ function DrawingLibrary.Update(ESP, Target)
 
                         if Textboxes.Name.Visible then
                             Textboxes.Name.Outline = Outline
-                            Textboxes.Name.Font = Fonts.GothamBold
                             Textboxes.Name.Transparency = Transparency
                             Textboxes.Name.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Name.Text = Mode == "Player" and Target.Name
@@ -643,7 +642,6 @@ function DrawingLibrary.Update(ESP, Target)
                         end
                         if Textboxes.Health.Visible then
                             Textboxes.Health.Outline = Outline
-                            Textboxes.Health.Font = Fonts.GothamBold
                             Textboxes.Health.Transparency = Transparency
                             Textboxes.Health.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
@@ -659,7 +657,6 @@ function DrawingLibrary.Update(ESP, Target)
                         end
                         if Textboxes.Distance.Visible then
                             Textboxes.Distance.Outline = Outline
-                            Textboxes.Distance.Font = Fonts.GothamBold
                             Textboxes.Distance.Transparency = Transparency
                             Textboxes.Distance.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Distance.Text = tostring(math.floor(Distance)) .. " studs"
@@ -676,7 +673,6 @@ Textboxes.Distance.Position = TextAntiAliasingXY(
                             local Weapon = GetWeapon(Target, Character, Mode)
 
                             Textboxes.Weapon.Outline = Outline
-                            Textboxes.Weapon.Font = Fonts.GothamBold
                             Textboxes.Weapon.Transparency = Transparency
                             Textboxes.Weapon.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Weapon.Text = Weapon
@@ -1062,7 +1058,6 @@ end
 
                             if Textboxes.Name.Visible then
                                 Textboxes.Name.Outline = Outline
-                                Textboxes.Name.Font = Fonts.GothamBold
                                 Textboxes.Name.Transparency = Transparency
                                 Textboxes.Name.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Name.Text = Mode == "Player" and Target.Name
@@ -1091,7 +1086,6 @@ end
                             end
                             if Textboxes.Distance.Visible then
                                 Textboxes.Distance.Outline = Outline
-                                Textboxes.Distance.Font = Fonts.GothamBold
                                 Textboxes.Distance.Transparency = Transparency
                                 Textboxes.Distance.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Distance.Text = tostring(math.floor(Distance)) .. " studs"
@@ -1756,7 +1750,6 @@ end)
 
                             if Textboxes.Name.Visible then
                                 Textboxes.Name.Outline = Outline
-                                Textboxes.Name.Font = Fonts.GothamBold
                                 Textboxes.Name.Transparency = Transparency
                                 Textboxes.Name.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Name.Text = ESP.Mode == "Player" and Target.Name
@@ -1769,7 +1762,6 @@ end)
                             end
                             if Textboxes.Health.Visible then
                                 Textboxes.Health.Outline = Outline
-                                Textboxes.Health.Font = Fonts.GothamBold
                                 Textboxes.Health.Transparency = Transparency
                                 Textboxes.Health.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
@@ -1785,7 +1777,6 @@ end)
                             end
                             if Textboxes.Distance.Visible then
                                 Textboxes.Distance.Outline = Outline
-                                Textboxes.Distance.Font = Fonts.GothamBold
                                 Textboxes.Distance.Transparency = Transparency
                                 Textboxes.Distance.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Distance.Text = tostring(math.floor(ESP.Target.Distance)) .. " studs"
@@ -1802,7 +1793,6 @@ end)
                                 local Weapon = GetWeapon(Target, Character, ESP.Mode)
 
                                 Textboxes.Weapon.Outline = Outline
-                                Textboxes.Weapon.Font = Fonts.GothamBold
                                 Textboxes.Weapon.Transparency = Transparency
                                 Textboxes.Weapon.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Weapon.Text = Weapon
