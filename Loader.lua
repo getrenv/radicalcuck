@@ -95,14 +95,6 @@ LocalPlayer.OnTeleport:Connect(function(State)
     end
 end)
 
-game:BindToClose(function()
-    pcall(function()
-        if getgenv().Radical and getgenv().Radical.Utilities and type(getgenv().Radical.Utilities.Cleanup) == "function" then
-            getgenv().Radical.Utilities.Cleanup()
-        end
-    end)
-end)
-
 Radical.Game = GetGameInfo()
 local success, err = pcall(LoadScript, Radical.Game.Script)
 if not success then
