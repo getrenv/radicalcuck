@@ -3,19 +3,19 @@ repeat task.wait() until game.GameId ~= 0
 
 if Radical and Radical.Loaded then
     Radical.Utilities.UI:Push({
-        Title = "Radical Hub",
+        Title = "Radical Hub | Error (0x1)",
         Description = "Script already running!",
         Duration = 5
     }) return
 end
 
---[[if Radical and (Radical.Game and not Radical.Loaded) then
+if Radical and (Radical.Game and not Radical.Loaded) then
     Radical.Utilities.UI:Push({
-        Title = "Radical Hub",
+        Title = "Radical Hub | Error (0x2)",
         Description = "Something went wrong!",
         Duration = 5
     }) return
-end]]
+end
 
 local PlayerService = game:GetService("Players")
 repeat task.wait() until PlayerService.LocalPlayer
