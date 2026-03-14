@@ -24,11 +24,11 @@ local LocalPlayer = PlayerService.LocalPlayer
 local Aimbot, SilentAim, Trigger = false, nil, nil
 
 local Mannequin = ReplicatedStorage.Assets.Mannequin
-local Vehicles = Workspace.Vehicles.Spawned
+local Vehicles = Workspace.Vehicles
 local Characters = Workspace.Characters
 local Corpses = Workspace.Corpses
 local Zombies = Workspace.Zombies
-local Loot = Workspace.Loot
+local Loot = Workspace["Loot Simulation"]
 
 local Framework = require(ReplicatedFirst:WaitForChild("Framework"))
 Framework:WaitForLoaded()
