@@ -464,6 +464,7 @@ function Utility.ESPSection(Self, Window, Name, Flag, BoxEnabled, ChamEnabled, H
 
                 BoxSection:Toggle({Name = "Filled", Flag = Flag .. "/Box/Filled", Value = false})
                 BoxSection:Toggle({Name = "Outline", Flag = Flag .. "/Box/Outline", Value = true})
+                BoxSection:Slider({Name = "Thickness", Flag = Flag .. "/Box/Thickness", Min = 1, Max = 19, Value = 1, OnlyOdd = true})
                 BoxSection:Slider({Name = "Transparency", Flag = Flag .. "/Box/Transparency", Min = 0, Max = 1, Precise = 2, Value = 0})
                 BoxSection:Slider({Name = "Corner Size", Flag = Flag .. "/Box/CornerSize", Min = 10, Max = 100, Value = 50, Unit = "%"})
                 BoxSection:Divider()
