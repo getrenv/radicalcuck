@@ -376,8 +376,8 @@ function DrawingLibrary.Update(ESP, Target)
                             local FromPosition = GetFlag(Flags, Flag, "/Tracer/Mode")
                             local Thickness = GetFlag(Flags, Flag, "/Tracer/Thickness")
                             local Transparency = 1 - GetFlag(Flags, Flag, "/Tracer/Transparency")
-                            local OutlineColor = GetFlag(Flags, Flag, "/Tracer/OutlineColor")
-                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                            local OutlineColor = GetFlag(Flags, Flag, "/Tracer/OutlineColor") or {0, 0, 0}
+                            local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
                             FromPosition = (FromPosition[1] == "From Mouse" and UserInputService:GetMouseLocation())
                             or (FromPosition[1] == "From Bottom" and V2New(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y))
 
@@ -403,8 +403,8 @@ function DrawingLibrary.Update(ESP, Target)
                             local Thickness = GetFlag(Flags, Flag, "/HeadDot/Thickness")
                             local Autoscale = GetFlag(Flags, Flag, "/HeadDot/Autoscale")
                             local Transparency = 1 - GetFlag(Flags, Flag, "/HeadDot/Transparency")
-                            local OutlineColor = GetFlag(Flags, Flag, "/HeadDot/OutlineColor")
-                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                            local OutlineColor = GetFlag(Flags, Flag, "/HeadDot/OutlineColor") or {0, 0, 0}
+                            local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
                             Radius = GetScaleFactor(Autoscale, Radius, Distance)
 
                             ESP.Drawing.HeadDot.Main.Color = Color
@@ -438,8 +438,8 @@ function DrawingLibrary.Update(ESP, Target)
                     local CornerSize = GetFlag(Flags, Flag, "/Box/CornerSize")
                     local Thickness = GetFlag(Flags, Flag, "/Box/Thickness")
                     local Filled = GetFlag(Flags, Flag, "/Box/Filled")
-                    local OutlineColor = GetFlag(Flags, Flag, "/Box/OutlineColor")
-                    local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                    local OutlineColor = GetFlag(Flags, Flag, "/Box/OutlineColor") or {0, 0, 0}
+                    local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
 
                     local ThicknessAdjust = Floor(Thickness / 2)
                     CornerSize = V2New(
@@ -632,8 +632,8 @@ function DrawingLibrary.Update(ESP, Target)
 
                         Transparency = 1 - GetFlag(Flags, Flag, "/Name/Transparency")
                         Outline = GetFlag(Flags, Flag, "/Name/Outline")
-                        local OutlineColor = GetFlag(Flags, Flag, "/Name/OutlineColor")
-                        local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                        local OutlineColor = GetFlag(Flags, Flag, "/Name/OutlineColor") or {0, 0, 0}
+                        local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
 
                         if Textboxes.Name.Visible then
                             Textboxes.Name.Outline = Outline
@@ -721,8 +721,8 @@ Textboxes.Weapon.Position = TextAntiAliasingXY(
                 local Filled = GetFlag(Flags, Flag, "/Arrow/Filled")
                 local Thickness = GetFlag(Flags, Flag, "/Arrow/Thickness")
                 local Transparency = 1 - GetFlag(Flags, Flag, "/Arrow/Transparency")
-                local OutlineColor = GetFlag(Flags, Flag, "/Arrow/OutlineColor")
-                local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                local OutlineColor = GetFlag(Flags, Flag, "/Arrow/OutlineColor") or {0, 0, 0}
+                local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
 
                 ESP.Drawing.Arrow.Main.Color = Color
 
@@ -1069,8 +1069,8 @@ end
 
                             Transparency = 1 - GetFlag(Flags, Flag, "/Name/Transparency")
                             Outline = GetFlag(Flags, Flag, "/Name/Outline")
-                            local OutlineColor = GetFlag(Flags, Flag, "/Name/OutlineColor")
-                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                            local OutlineColor = GetFlag(Flags, Flag, "/Name/OutlineColor") or {0, 0, 0}
+                            local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
 
                             if Textboxes.Name.Visible then
                                 Textboxes.Name.Outline = Outline
@@ -1768,8 +1768,8 @@ end)
 
                             Transparency = 1 - GetFlag(ESP.Flags, ESP.Flag, "/Name/Transparency")
                             Outline = GetFlag(ESP.Flags, ESP.Flag, "/Name/Outline")
-                            local OutlineColor = GetFlag(ESP.Flags, ESP.Flag, "/Name/OutlineColor")
-                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
+                            local OutlineColor = GetFlag(ESP.Flags, ESP.Flag, "/Name/OutlineColor") or {0, 0, 0}
+                            local OutlineColorValue = ColorNew(OutlineColor[1], OutlineColor[2], OutlineColor[3])
 
                             if Textboxes.Name.Visible then
                                 Textboxes.Name.Outline = Outline
