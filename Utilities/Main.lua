@@ -464,7 +464,6 @@ function Utility.ESPSection(Self, Window, Name, Flag, BoxEnabled, ChamEnabled, H
 
                 BoxSection:Toggle({Name = "Filled", Flag = Flag .. "/Box/Filled", Value = false})
                 BoxSection:Toggle({Name = "Outline", Flag = Flag .. "/Box/Outline", Value = true})
-                BoxSection:Colorpicker({Name = "Outline Color", Flag = Flag .. "/Box/OutlineColor", Value = {0, 0, 0, 0, false}})
                 BoxSection:Slider({Name = "Transparency", Flag = Flag .. "/Box/Transparency", Min = 0, Max = 1, Precise = 2, Value = 0})
                 BoxSection:Slider({Name = "Corner Size", Flag = Flag .. "/Box/CornerSize", Min = 10, Max = 100, Value = 50, Unit = "%"})
                 BoxSection:Divider()
@@ -473,7 +472,6 @@ function Utility.ESPSection(Self, Window, Name, Flag, BoxEnabled, ChamEnabled, H
                 BoxSection:Toggle({Name = "Distance Enabled", Flag = Flag .. "/Distance/Enabled", Value = false})
                 BoxSection:Toggle({Name = "Weapon Enabled", Flag = Flag .. "/Weapon/Enabled", Value = false})
                 BoxSection:Toggle({Name = "Outline", Flag = Flag .. "/Name/Outline", Value = true})
-                BoxSection:Colorpicker({Name = "Text Outline Color", Flag = Flag .. "/Name/OutlineColor", Value = {0, 0, 0, 0, false}})
                 BoxSection:Toggle({Name = "Autoscale", Flag = Flag .. "/Name/Autoscale", Value = true})
                 BoxSection:Slider({Name = "Size", Flag = Flag .. "/Name/Size", Min = 1, Max = 100, Value = 8})
                 BoxSection:Slider({Name = "Transparency", Flag = Flag .. "/Name/Transparency", Min = 0, Max = 1, Precise = 2, Value = 0.25})
@@ -493,7 +491,6 @@ function Utility.ESPSection(Self, Window, Name, Flag, BoxEnabled, ChamEnabled, H
                 HeadSection:Toggle({Name = "Enabled", Flag = Flag .. "/HeadDot/Enabled", Value = false})
                 HeadSection:Toggle({Name = "Filled", Flag = Flag .. "/HeadDot/Filled", Value = true})
                 HeadSection:Toggle({Name = "Outline", Flag = Flag .. "/HeadDot/Outline", Value = true})
-                HeadSection:Colorpicker({Name = "Outline Color", Flag = Flag .. "/HeadDot/OutlineColor", Value = {0, 0, 0, 0, false}})
                 HeadSection:Toggle({Name = "Autoscale", Flag = Flag .. "/HeadDot/Autoscale", Value = true})
                 HeadSection:Slider({Name = "Size", Flag = Flag .. "/HeadDot/Radius", Min = 1, Max = 100, Value = 4})
                 --HeadSection:Slider({Name = "Smoothness", Flag = Flag .. "/HeadDot/Smoothness", Min = 0, Max = 100, Value = 10, Unit = "%"})
@@ -506,7 +503,6 @@ function Utility.ESPSection(Self, Window, Name, Flag, BoxEnabled, ChamEnabled, H
             local TracerSection = VisualsTab:Section({Name = "Tracers", Side = "Right"}) do
                 TracerSection:Toggle({Name = "Enabled", Flag = Flag .. "/Tracer/Enabled", Value = false})
                 TracerSection:Toggle({Name = "Outline", Flag = Flag .. "/Tracer/Outline", Value = true})
-                TracerSection:Colorpicker({Name = "Outline Color", Flag = Flag .. "/Tracer/OutlineColor", Value = {0, 0, 0, 0, false}})
                 TracerSection:Dropdown({Name = "Mode", Flag = Flag .. "/Tracer/Mode", List = {
                     {Name = "From Bottom", Mode = "Button", Value = true},
                     {Name = "From Mouse", Mode = "Button"}
@@ -520,7 +516,6 @@ function Utility.ESPSection(Self, Window, Name, Flag, BoxEnabled, ChamEnabled, H
                 OoVSection:Toggle({Name = "Enabled", Flag = Flag .. "/Arrow/Enabled", Value = false})
                 OoVSection:Toggle({Name = "Filled", Flag = Flag .. "/Arrow/Filled", Value = true})
                 OoVSection:Toggle({Name = "Outline", Flag = Flag .. "/Arrow/Outline", Value = true})
-                OoVSection:Colorpicker({Name = "Outline Color", Flag = Flag .. "/Arrow/OutlineColor", Value = {0, 0, 0, 0, false}})
                 OoVSection:Slider({Name = "Width", Flag = Flag .. "/Arrow/Width", Min = 14, Max = 28, Value = 14})
                 OoVSection:Slider({Name = "Height", Flag = Flag .. "/Arrow/Height", Min = 14, Max = 28, Value = 28})
                 OoVSection:Slider({Name = "Distance From Center", Flag = Flag .. "/Arrow/Radius", Min = 80, Max = 200, Value = 150})
