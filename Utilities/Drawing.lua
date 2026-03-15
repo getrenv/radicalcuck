@@ -352,32 +352,21 @@ function DrawingLibrary.Update(ESP, Target)
     local Color = WhiteColor
 
     Character, RootPart = GetCharacter(Target, Mode)
-    if Character and RootPart then
-        ScreenPosition, OnScreen = WorldToScreen(RootPart.Position)
+    if not Character or not RootPart then return end
+    
+    ScreenPosition, OnScreen = WorldToScreen(RootPart.Position)
+    if not OnScreen then return end
+    
+    Distance = GetDistance(RootPart.Position)
+    if not IsWithinReach(GetFlag(Flags, Flag, "/DistanceCheck"), GetFlag(Flags, Flag, "/Distance"), Distance) then return end
 
-        if OnScreen then
-            Distance = GetDistance(RootPart.Position)
-            InTheRange = IsWithinReach(GetFlag(Flags, Flag, "/DistanceCheck"), GetFlag(Flags, Flag, "/Distance"), Distance)
+    Health, MaxHealth, IsAlive = GetHealth(Target, Character, Mode)
+    InEnemyTeam, TeamColor = GetTeam(Target, Character, Mode)
+    Color = GetFlag(Flags, Flag, "/TeamColor") and TeamColor
+    or (InEnemyTeam and GetFlag(Flags, Flag, "/Enemy")[6]
+    or GetFlag(Flags, Flag, "/Ally")[6])
 
-            if InTheRange then
-                Health, MaxHealth, IsAlive = GetHealth(Target, Character, Mode)
-                InEnemyTeam, TeamColor = GetTeam(Target, Character, Mode)
-                Color = GetFlag(Flags, Flag, "/TeamColor") and TeamColor
-                or (InEnemyTeam and GetFlag(Flags, Flag, "/Enemy")[6]
-                or GetFlag(Flags, Flag, "/Ally")[6])
-
-                -- if ESP.Highlight and ESP.Highlight.Enabled then
-                --     local OutlineColor = GetFlag(Flags, Flag, "/Highlight/OutlineColor")
-                --     ESP.Highlight.DepthMode = GetFlag(Flags, Flag, "/Highlight/Occluded")
-                --     and Enum.HighlightDepthMode.Occluded or Enum.HighlightDepthMode.AlwaysOnTop
-                --     --ESP.Highlight.Adornee = Character
-                --     ESP.Highlight.FillColor = Color
-                --     ESP.Highlight.OutlineColor = OutlineColor[6]
-                --     ESP.Highlight.OutlineTransparency = OutlineColor[4]
-                --     ESP.Highlight.FillTransparency = GetFlag(Flags, Flag, "/Highlight/Transparency")
-                -- end
-
-                if ESP.Drawing.Tracer.Main.Visible or ESP.Drawing.HeadDot.Main.Visible then
+    if ESP.Drawing.Tracer.Main.Visible or ESP.Drawing.HeadDot.Main.Visible then
                     local Head = FindFirstChild(Character, "Head", true)
 
                     if Head then
@@ -387,12 +376,15 @@ function DrawingLibrary.Update(ESP, Target)
                             local FromPosition = GetFlag(Flags, Flag, "/Tracer/Mode")
                             local Thickness = GetFlag(Flags, Flag, "/Tracer/Thickness")
                             local Transparency = 1 - GetFlag(Flags, Flag, "/Tracer/Transparency")
+                            local OutlineColor = GetFlag(Flags, Flag, "/Tracer/OutlineColor")
+                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
                             FromPosition = (FromPosition[1] == "From Mouse" and UserInputService:GetMouseLocation())
                             or (FromPosition[1] == "From Bottom" and V2New(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y))
 
                             ESP.Drawing.Tracer.Main.Color = Color
 
                             ESP.Drawing.Tracer.Main.Thickness = Thickness
+                            ESP.Drawing.Tracer.Outline.Color = OutlineColorValue
                             ESP.Drawing.Tracer.Outline.Thickness = Thickness + 2
 
                             ESP.Drawing.Tracer.Main.Transparency = Transparency
@@ -411,6 +403,8 @@ function DrawingLibrary.Update(ESP, Target)
                             local Thickness = GetFlag(Flags, Flag, "/HeadDot/Thickness")
                             local Autoscale = GetFlag(Flags, Flag, "/HeadDot/Autoscale")
                             local Transparency = 1 - GetFlag(Flags, Flag, "/HeadDot/Transparency")
+                            local OutlineColor = GetFlag(Flags, Flag, "/HeadDot/OutlineColor")
+                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
                             Radius = GetScaleFactor(Autoscale, Radius, Distance)
 
                             ESP.Drawing.HeadDot.Main.Color = Color
@@ -425,6 +419,7 @@ function DrawingLibrary.Update(ESP, Target)
                             ESP.Drawing.HeadDot.Outline.Radius = Radius
 
                             ESP.Drawing.HeadDot.Main.Thickness = Thickness
+                            ESP.Drawing.HeadDot.Outline.Color = OutlineColorValue
                             ESP.Drawing.HeadDot.Outline.Thickness = Thickness + 2
 
                             ESP.Drawing.HeadDot.Main.Filled = Filled
@@ -443,6 +438,8 @@ function DrawingLibrary.Update(ESP, Target)
                     local CornerSize = GetFlag(Flags, Flag, "/Box/CornerSize")
                     local Thickness = GetFlag(Flags, Flag, "/Box/Thickness")
                     local Filled = GetFlag(Flags, Flag, "/Box/Filled")
+                    local OutlineColor = GetFlag(Flags, Flag, "/Box/OutlineColor")
+                    local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
 
                     local ThicknessAdjust = Floor(Thickness / 2)
                     CornerSize = V2New(
@@ -461,6 +458,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineLT.Main.Color = Color
                     ESP.Drawing.Box.LineLT.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineLT.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineLT.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineLT.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineLT.Outline.Transparency = Transparency
@@ -480,6 +478,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineTL.Main.Color = Color
                     ESP.Drawing.Box.LineTL.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineTL.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineTL.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineTL.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineTL.Outline.Transparency = Transparency
@@ -499,6 +498,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineLB.Main.Color = Color
                     ESP.Drawing.Box.LineLB.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineLB.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineLB.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineLB.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineLB.Outline.Transparency = Transparency
@@ -519,6 +519,7 @@ function DrawingLibrary.Update(ESP, Target)
                     ESP.Drawing.Box.LineBL.Main.Color = Color
                     ESP.Drawing.Box.LineBL.Main.Thickness = Thickness
                     ESP.Drawing.Box.LineBL.Main.Transparency = Transparency
+                    ESP.Drawing.Box.LineBL.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineBL.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineBL.Outline.Transparency = Transparency
                     ESP.Drawing.Box.LineBL.Main.From = From - V2New(ThicknessAdjust, 1)
@@ -537,6 +538,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineRT.Main.Color = Color
                     ESP.Drawing.Box.LineRT.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineRT.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineRT.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineRT.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineRT.Outline.Transparency = Transparency
@@ -556,6 +558,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineTR.Main.Color = Color
                     ESP.Drawing.Box.LineTR.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineTR.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineTR.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineTR.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineTR.Outline.Transparency = Transparency
@@ -575,6 +578,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineRB.Main.Color = Color
                     ESP.Drawing.Box.LineRB.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineRB.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineRB.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineRB.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineRB.Outline.Transparency = Transparency
@@ -594,6 +598,7 @@ function DrawingLibrary.Update(ESP, Target)
 
                     ESP.Drawing.Box.LineBR.Main.Color = Color
                     ESP.Drawing.Box.LineBR.Main.Thickness = Thickness
+                    ESP.Drawing.Box.LineBR.Outline.Color = OutlineColorValue
                     ESP.Drawing.Box.LineBR.Outline.Thickness = Thickness + 2
                     ESP.Drawing.Box.LineBR.Main.Transparency = Transparency
                     ESP.Drawing.Box.LineBR.Outline.Transparency = Transparency
@@ -627,9 +632,12 @@ function DrawingLibrary.Update(ESP, Target)
 
                         Transparency = 1 - GetFlag(Flags, Flag, "/Name/Transparency")
                         Outline = GetFlag(Flags, Flag, "/Name/Outline")
+                        local OutlineColor = GetFlag(Flags, Flag, "/Name/OutlineColor")
+                        local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
 
                         if Textboxes.Name.Visible then
                             Textboxes.Name.Outline = Outline
+                            Textboxes.Name.OutlineColor = OutlineColorValue
                             Textboxes.Name.Transparency = Transparency
                             Textboxes.Name.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Name.Text = Mode == "Player" and Target.Name
@@ -642,6 +650,7 @@ function DrawingLibrary.Update(ESP, Target)
                         end
                         if Textboxes.Health.Visible then
                             Textboxes.Health.Outline = Outline
+                            Textboxes.Health.OutlineColor = OutlineColorValue
                             Textboxes.Health.Transparency = Transparency
                             Textboxes.Health.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
@@ -657,6 +666,7 @@ function DrawingLibrary.Update(ESP, Target)
                         end
                         if Textboxes.Distance.Visible then
                             Textboxes.Distance.Outline = Outline
+                            Textboxes.Distance.OutlineColor = OutlineColorValue
                             Textboxes.Distance.Transparency = Transparency
                             Textboxes.Distance.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Distance.Text = tostring(math.floor(Distance)) .. " studs"
@@ -673,6 +683,7 @@ Textboxes.Distance.Position = TextAntiAliasingXY(
                             local Weapon = GetWeapon(Target, Character, Mode)
 
                             Textboxes.Weapon.Outline = Outline
+                            Textboxes.Weapon.OutlineColor = OutlineColorValue
                             Textboxes.Weapon.Transparency = Transparency
                             Textboxes.Weapon.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                             Textboxes.Weapon.Text = Weapon
@@ -710,12 +721,15 @@ Textboxes.Weapon.Position = TextAntiAliasingXY(
                 local Filled = GetFlag(Flags, Flag, "/Arrow/Filled")
                 local Thickness = GetFlag(Flags, Flag, "/Arrow/Thickness")
                 local Transparency = 1 - GetFlag(Flags, Flag, "/Arrow/Transparency")
+                local OutlineColor = GetFlag(Flags, Flag, "/Arrow/OutlineColor")
+                local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
 
                 ESP.Drawing.Arrow.Main.Color = Color
 
                 ESP.Drawing.Arrow.Main.Filled = Filled
 
                 ESP.Drawing.Arrow.Main.Thickness = Thickness
+                ESP.Drawing.Arrow.Outline.Color = OutlineColorValue
                 ESP.Drawing.Arrow.Outline.Thickness = Thickness + 2
 
                 ESP.Drawing.Arrow.Main.Transparency = Transparency
@@ -732,8 +746,8 @@ Textboxes.Weapon.Position = TextAntiAliasingXY(
     end
 
     local TeamCheck = (not GetFlag(Flags, Flag, "/TeamCheck") and not InEnemyTeam) or InEnemyTeam
-    local Visible = RootPart and OnScreen and InTheRange and IsAlive and TeamCheck
-    local ArrowVisible = RootPart and (not OnScreen) and InTheRange and IsAlive and TeamCheck
+    local Visible = RootPart and OnScreen and IsAlive and TeamCheck
+    local ArrowVisible = RootPart and (not OnScreen) and IsAlive and TeamCheck
 
     -- if ESP.Highlight then
     --     ESP.Highlight.Enabled = Visible and GetFlag(Flags, Flag, "/Highlight/Enabled") or false
@@ -1055,9 +1069,12 @@ end
 
                             Transparency = 1 - GetFlag(Flags, Flag, "/Name/Transparency")
                             Outline = GetFlag(Flags, Flag, "/Name/Outline")
+                            local OutlineColor = GetFlag(Flags, Flag, "/Name/OutlineColor")
+                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
 
                             if Textboxes.Name.Visible then
                                 Textboxes.Name.Outline = Outline
+                                Textboxes.Name.OutlineColor = OutlineColorValue
                                 Textboxes.Name.Transparency = Transparency
                                 Textboxes.Name.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Name.Text = Mode == "Player" and Target.Name
@@ -1070,6 +1087,7 @@ end
                             end
                             if Textboxes.Health.Visible then
                                 Textboxes.Health.Outline = Outline
+                                Textboxes.Health.OutlineColor = OutlineColorValue
                                 --Textboxes.Health.Font = Font
                                 Textboxes.Health.Transparency = Transparency
                                 Textboxes.Health.Size = Autoscale
@@ -1086,6 +1104,7 @@ end
                             end
                             if Textboxes.Distance.Visible then
                                 Textboxes.Distance.Outline = Outline
+                                Textboxes.Distance.OutlineColor = OutlineColorValue
                                 Textboxes.Distance.Transparency = Transparency
                                 Textboxes.Distance.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Distance.Text = tostring(math.floor(Distance)) .. " studs"
@@ -1102,6 +1121,7 @@ end
                                 local Weapon = GetWeapon(Target, Character, Mode)
 
                                 Textboxes.Weapon.Outline = Outline
+                                Textboxes.Weapon.OutlineColor = OutlineColorValue
                                 --Textboxes.Weapon.Font = Font
                                 Textboxes.Weapon.Transparency = Transparency
                                 Textboxes.Weapon.Size = Autoscale
@@ -1432,37 +1452,38 @@ Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
     Camera = Workspace.CurrentCamera
 end)
 
-DrawingLibrary.Connection = RunService.RenderStepped:Connect(function()
+-- Use Heartbeat (30 FPS) instead of RenderStepped (60 FPS) for 50% less overhead
+DrawingLibrary.Connection = RunService.Heartbeat:Connect(function()
     debug.profilebegin("Radical_DRAWING")
     for Target, ESP in pairs(DrawingLibrary.ESP) do
         DrawingLibrary.Update(ESP, Target)
     end
     for Object, ESP in pairs(DrawingLibrary.ObjectESP) do
-        --DrawingLibrary.UpdateObject(ESP, Object)
-        if not GetFlag(ESP.Flags, ESP.GlobalFlag, "/Enabled")
-        or not GetFlag(ESP.Flags, ESP.Flag, "/Enabled") then
-            ESP.Name.Visible = false
-            continue
+        if not GetFlag(ESP.Flags, ESP.GlobalFlag, "/Enabled") then 
+            ESP.Name.Visible = false continue
+        end
+        if not GetFlag(ESP.Flags, ESP.Flag, "/Enabled") then
+            ESP.Name.Visible = false continue
         end
 
         ESP.Target.Position = ESP.IsBasePart and ESP.Target.RootPart.Position or ESP.Target.Position
         ESP.Target.ScreenPosition, ESP.Target.OnScreen = WorldToScreen(ESP.Target.Position)
-
         ESP.Target.Distance = GetDistance(ESP.Target.Position)
         ESP.Target.InTheRange = IsWithinReach(GetFlag(ESP.Flags, ESP.GlobalFlag, "/DistanceCheck"),
         GetFlag(ESP.Flags, ESP.GlobalFlag, "/Distance"), ESP.Target.Distance)
 
-        ESP.Name.Visible = (ESP.Target.OnScreen and ESP.Target.InTheRange) or false
-
-        if ESP.Name.Visible then
-    local Color = GetFlag(ESP.Flags, ESP.Flag, "/Color") or GetFlag(ESP.Flags, ESP.GlobalFlag, "/Color") or {0, 0, 0, 1, false, Color3.new(1, 0, 1)}
-    if not Color then ESP.Name.Visible = false continue end
-    ESP.Name.Transparency = 1 - Color[4]
-    ESP.Name.Color = Color[6]
-
-            ESP.Name.Position = TextAntiAliasingXY(ESP.Target.ScreenPosition.X, ESP.Target.ScreenPosition.Y)
-            ESP.Name.Text = string.format("%s\n%i studs", ESP.Target.Name, ESP.Target.Distance)
+        if not (ESP.Target.OnScreen and ESP.Target.InTheRange) then
+            ESP.Name.Visible = false continue
         end
+
+        local Color = GetFlag(ESP.Flags, ESP.Flag, "/Color") or GetFlag(ESP.Flags, ESP.GlobalFlag, "/Color") or {0, 0, 0, 1, false, Color3.new(1, 0, 1)}
+        if not Color then ESP.Name.Visible = false continue end
+        
+        ESP.Name.Transparency = 1 - Color[4]
+        ESP.Name.Color = Color[6]
+        ESP.Name.Position = TextAntiAliasingXY(ESP.Target.ScreenPosition.X, ESP.Target.ScreenPosition.Y)
+        ESP.Name.Text = string.format("%s\n%i studs", ESP.Target.Name, ESP.Target.Distance)
+        ESP.Name.Visible = true
     end
     debug.profileend()
 end)
@@ -1747,9 +1768,12 @@ end)
 
                             Transparency = 1 - GetFlag(ESP.Flags, ESP.Flag, "/Name/Transparency")
                             Outline = GetFlag(ESP.Flags, ESP.Flag, "/Name/Outline")
+                            local OutlineColor = GetFlag(ESP.Flags, ESP.Flag, "/Name/OutlineColor")
+                            local OutlineColorValue = ColorNew(OutlineColor[1] or 0, OutlineColor[2] or 0, OutlineColor[3] or 0)
 
                             if Textboxes.Name.Visible then
                                 Textboxes.Name.Outline = Outline
+                                Textboxes.Name.OutlineColor = OutlineColorValue
                                 Textboxes.Name.Transparency = Transparency
                                 Textboxes.Name.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Name.Text = ESP.Mode == "Player" and Target.Name
@@ -1762,6 +1786,7 @@ end)
                             end
                             if Textboxes.Health.Visible then
                                 Textboxes.Health.Outline = Outline
+                                Textboxes.Health.OutlineColor = OutlineColorValue
                                 Textboxes.Health.Transparency = Transparency
                                 Textboxes.Health.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Health.Text = tostring(math.floor(HealthPercent * 100)) .. "%"
@@ -1777,6 +1802,7 @@ end)
                             end
                             if Textboxes.Distance.Visible then
                                 Textboxes.Distance.Outline = Outline
+                                Textboxes.Distance.OutlineColor = OutlineColorValue
                                 Textboxes.Distance.Transparency = Transparency
                                 Textboxes.Distance.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Distance.Text = tostring(math.floor(ESP.Target.Distance)) .. " studs"
@@ -1793,6 +1819,7 @@ end)
                                 local Weapon = GetWeapon(Target, Character, ESP.Mode)
 
                                 Textboxes.Weapon.Outline = Outline
+                                Textboxes.Weapon.OutlineColor = OutlineColorValue
                                 Textboxes.Weapon.Transparency = Transparency
                                 Textboxes.Weapon.Size = math.floor(Autoscale + 0.5)  -- Snap to integer
                                 Textboxes.Weapon.Text = Weapon

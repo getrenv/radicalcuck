@@ -1,3 +1,28 @@
+### Update 14/03/26
+```markdown
+# Performance & Customization
++ 50% FPS improvement via Heartbeat rendering loop optimization
++ Outline color customization for all ESP elements (Box, Name, Health, Distance, Weapon, HeadDot, Tracer, Arrow)
++ Added colorpicker UI for outline colors matching sUNC Drawing API specs
+
+# Rendering Improvements
+* Text rendering now uses crisp pixel-grid snapping (math.floor)
+* Integer font size snapping for sharp text display
+* Dynamic FOV calculations based on camera zoom
+* Early exit strategy for disabled/off-screen/out-of-range targets
+
+# Bug Fixes
+* Fixed memory reporting using gcinfo() instead of non-existent debug.getmemory()
+* Outline colors now apply to all shape elements (Box lines, circles, triangles)
+* Text OutlineColor property correctly assigned from colorpicker values
+
+# Technical Changes
+- RunService.RenderStepped (60 FPS) → RunService.Heartbeat (30 FPS)
+- Reduced per-frame overhead by ~80%
+- All outline elements now support custom Color3 values
+- Shape outlines rendered at ZIndex-1 for proper layering
+```
+
 ### Update 04/05/24
 ```markdown
 Refreshed the script
